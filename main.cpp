@@ -69,7 +69,7 @@ void renderScene(void) {
               0.0,0.0,0.0,
               0.0f,1.0f,0.0f);
     
-    glPolygonMode(GL_FRONT,GL_LINE);
+    //glPolygonMode(GL_FRONT,GL_LINE);
     glColor3f(17.0/255.0,154.9/255.0,205.0/255.0);
 
     for(int i=0;i<modelos.size();){
@@ -98,6 +98,14 @@ void renderScene(void) {
 			float z = atof(modelos.at(i+4).c_str());
 			glRotatef(ang,x,y,z);
 			i+=5;
+		}
+
+		else if(strcmp("scale",modelos.at(i).c_str())==0){
+			float sx = atof(modelos.at(i+1).c_str());
+			float sy = atof(modelos.at(i+2).c_str());
+			float sz = atof(modelos.at(i+3).c_str());
+			glScalef(sx,sy,sz);
+			i+=4;
 		}
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
@@ -141,8 +149,6 @@ void renderScene(void) {
 	     }
     }
 
-
-    //drawModel();
     // End of frame
     glutSwapBuffers();
 }
@@ -159,7 +165,6 @@ void lerXML(TiXmlElement* e){
 				
 			else if(strcmp("models",e->Value()) == 0){
 				if(e==NULL) printf("Erro no models.\n");
-				//modelos.push_back(e->Value());
 				TiXmlElement* m = e->FirstChildElement("model");
 				while(m){
 					modelos.push_back(m->Value());
@@ -172,6 +177,17 @@ void lerXML(TiXmlElement* e){
 
 			else if(strcmp("translate",e->Value()) == 0){
 				if(e==NULL) printf("Erro no translate.\n");
+				modelos.push_back(e->Value());
+				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				while(pAttrib){
+					modelos.push_back(pAttrib->Value());
+					pAttrib=pAttrib->Next();
+				}
+				e=e->NextSiblingElement();
+			}
+
+			else if(strcmp("scale",e->Value()) == 0){
+				if(e==NULL) printf("Erro no scale.\n");
 				modelos.push_back(e->Value());
 				TiXmlAttribute* pAttrib=e->FirstAttribute();
 				while(pAttrib){
