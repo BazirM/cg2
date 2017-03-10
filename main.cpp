@@ -18,7 +18,6 @@ vector< std::vector<long double> > vert;
 int nv;
 vector<std::string> modelos;
 
-
 void changeSize(int w, int h) {
     
     // Prevent a divide by zero, when window is too short
@@ -84,7 +83,78 @@ void renderScene(void) {
     
     glPolygonMode(GL_FRONT,GL_LINE);
     glColor3f(17.0/255.0,154.9/255.0,205.0/255.0);
-    drawModel();
+
+    int i;
+    while(i<modelos.size()){
+		if(strcmp("group",modelos.at(i).c_str())==0){
+			glPushMatrix();
+			i++;
+		}
+		
+		else if(strcmp("/group",modelos.at(i).c_str())==0){
+			glPopMatrix();
+			i++;
+		}
+
+		else if(strcmp("translate",modelos.at(i).c_str())==0){
+			float x = atof(modelos.at(i+1).c_str());
+			float y = atof(modelos.at(i+2).c_str());
+			float z = atof(modelos.at(i+3).c_str());
+			glTranslatef(x,y,z);
+			i+=4;
+		}
+
+		else if(strcmp("rotate",modelos.at(i).c_str())==0){
+			float ang = atof(modelos.at(i+1).c_str());
+			float x = atof(modelos.at(i+2).c_str());
+			float y = atof(modelos.at(i+3).c_str());
+			float z = atof(modelos.at(i+4).c_str());
+			glRotatef(ang,x,y,z);
+			i+=5;
+		}
+
+		else if(strcmp("model",modelos.at(i).c_str())==0){
+			int nvertices;
+			ifstream modelo;
+			modelo.open(modelos.at(i).c_str());
+    			if (modelo.is_open()){
+			modelo >> nvertices;
+        		for(int i = 0; i < nvertices; i=i+3){
+				long double f1;
+				long double f2;
+				long double f3;
+
+				long double f4;
+				long double f5;
+				long double f6;
+
+				long double f7;
+				long double f8;
+				long double f9;
+				modelo >> f1;
+				modelo >> f2;
+				modelo >> f3;
+
+				modelo >> f4;
+				modelo >> f5;
+				modelo >> f6;
+
+				modelo >> f7;
+				modelo >> f8;
+				modelo >> f9;
+				glBegin(GL_TRIANGLES);
+				glVertex3f(f1, f2, f3);
+				glVertex3f(f4, f5, f6);
+				glVertex3f(f7, f8, f9);
+				glEnd();
+			}
+		     }
+		 modelo.close();
+		 i++;
+	     }
+    }
+
+    //drawModel();
     // End of frame
     glutSwapBuffers();
 }
@@ -94,38 +164,41 @@ void lerXML(TiXmlElement* e){
 
 	while(e){				
 			if(strcmp("group",e->Value()) == 0){
-				if(e==NULL) printf("lol\n");
-				else{ modelos.push_back(e->Value()); lerXML(e->FirstChildElement()); e=e->NextSiblingElement(); }
+				if(e==NULL) printf("Erro no group.\n");
+				else{ modelos.push_back(e->Value()); lerXML(e->FirstChildElement()); modelos.push_back("/group"); e=e->NextSiblingElement(); }
 			}
 				
 				
 			else if(strcmp("models",e->Value()) == 0){
-				if(e==NULL) printf("lol\n");
-				else{ printf("%s\n",e->Value());}
+				if(e==NULL) printf("Erro no models.\n");
+				//modelos.push_back(e->Value());
 				TiXmlElement* m = e->FirstChildElement("model");
-				TiXmlAttribute* pA=m->FirstAttribute();
-				printf("%s\n",pA->Value());
-				modelos.push_back(pA->Value());
+				while(m){
+					modelos.push_back(m->Value());
+					TiXmlAttribute* pA=m->FirstAttribute();
+					modelos.push_back(pA->Value());
+					m=m->NextSiblingElement();
+				}
 				e=e->NextSiblingElement();
 			}
 
 			else if(strcmp("translate",e->Value()) == 0){
-				if(e==NULL) printf("lol\n");
-				else{ printf("%s\n",e->Value());}
+				if(e==NULL) printf("Erro no translate.\n");
+				modelos.push_back(e->Value());
 				TiXmlAttribute* pAttrib=e->FirstAttribute();
 				while(pAttrib){
-					printf("%s\n",pAttrib->Value());
+					modelos.push_back(pAttrib->Value());
 					pAttrib=pAttrib->Next();
 				}
 				e=e->NextSiblingElement();
 			}
 
 			else if(strcmp("rotate",e->Value()) == 0){
-				if(e==NULL) printf("lol\n");
-				else{ printf("%s\n",e->Value());}
+				if(e==NULL) printf("Erro no rotate.\n");
+				modelos.push_back(e->Value());
 				TiXmlAttribute* pAttrib=e->FirstAttribute();
 				while(pAttrib){
-					printf("%s\n",pAttrib->Value());
+					modelos.push_back(pAttrib->Value());
 					pAttrib=pAttrib->Next();
 				}
 				e=e->NextSiblingElement();
@@ -153,7 +226,10 @@ int main(int argc, char* argv[]) {
 		printf("Failed to load file\n");
 	}
 
-    	int nvertices;
+
+	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());	
+
+    	/*int nvertices;
     	ifstream modelo;
     	for(int j = 0; j<modelos.size(); j++){
     		modelo.open(modelos.at(j).c_str());
@@ -174,7 +250,7 @@ int main(int argc, char* argv[]) {
 	nv+=nvertices;
 	modelo.close();
     }
-    }
+    }*/
     
     // init GLUT and the window
     glutInit(&argc, argv);
@@ -198,7 +274,7 @@ int main(int argc, char* argv[]) {
     glClearColor(0.0f,0.0f,0.0f,0.0f);
     
     // enter GLUT's main cycle
-    //glutMainLoop();
+    glutMainLoop();
     
     return 1;
 }
