@@ -15,7 +15,8 @@
 using namespace std;
 float alfa = M_PI/2, beta = M_PI/6, raio = 20.0;
 vector< std::vector<long double> > vert;
-int nv;
+int i = 0;
+float x,y,z;
 vector<std::string> modelos;
 
 void changeSize(int w, int h) {
@@ -41,19 +42,6 @@ void changeSize(int w, int h) {
     
     // return to the model view matrix mode
     glMatrixMode(GL_MODELVIEW);
-}
-
-
-void drawModel(void) {
-
-	int it, x=0;
-	for(it=0;it<nv;it=it+=3){
-			glBegin(GL_TRIANGLES);
-			glVertex3f((vert[it])[0], (vert[it])[1], (vert[it])[2]);
-			glVertex3f((vert[it+1])[0], (vert[it+1])[1], (vert[it+1])[2]);
-			glVertex3f((vert[it+2])[0], (vert[it+2])[1], (vert[it+2])[2]);
-			glEnd();
-	}
 }
 
 void processKeys(unsigned char c, int xx, int yy) {
@@ -84,8 +72,7 @@ void renderScene(void) {
     glPolygonMode(GL_FRONT,GL_LINE);
     glColor3f(17.0/255.0,154.9/255.0,205.0/255.0);
 
-    int i;
-    while(i<modelos.size()){
+    for(int i=0;i<modelos.size();){
 		if(strcmp("group",modelos.at(i).c_str())==0){
 			glPushMatrix();
 			i++;
@@ -115,22 +102,22 @@ void renderScene(void) {
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
 			int nvertices;
+			long double f1;
+			long double f2;
+			long double f3;
+
+			long double f4;
+			long double f5;
+			long double f6;
+
+			long double f7;
+			long double f8;
+			long double f9;
 			ifstream modelo;
-			modelo.open(modelos.at(i).c_str());
+			modelo.open(modelos.at(i+1).c_str());
     			if (modelo.is_open()){
 			modelo >> nvertices;
-        		for(int i = 0; i < nvertices; i=i+3){
-				long double f1;
-				long double f2;
-				long double f3;
-
-				long double f4;
-				long double f5;
-				long double f6;
-
-				long double f7;
-				long double f8;
-				long double f9;
+        		for(int k = 0; k < nvertices; k=k+3){
 				modelo >> f1;
 				modelo >> f2;
 				modelo >> f3;
@@ -148,11 +135,12 @@ void renderScene(void) {
 				glVertex3f(f7, f8, f9);
 				glEnd();
 			}
-		     }
+		     	}
 		 modelo.close();
-		 i++;
+		 i=i+2;
 	     }
     }
+
 
     //drawModel();
     // End of frame
