@@ -13,7 +13,7 @@
 #include "tinystr.h"
 
 using namespace std;
-float alfa = M_PI/2, beta = M_PI/6, raio = 20.0;
+float alfa = M_PI/2, beta = M_PI/6, raio = 200.0;
 vector< std::vector<long double> > vert;
 int i = 0;
 float x,y,z;
@@ -46,8 +46,8 @@ void changeSize(int w, int h) {
 
 void processKeys(unsigned char c, int xx, int yy) {
   switch (c){
-  case 'q': raio=raio+0.1; break;
-  case 'e': raio=raio-0.1; break;
+  case 'q': raio=raio+1.0; break;
+  case 'e': raio=raio-1.0; break;
   case 'w': if((beta+0.1<=M_PI/2) && (beta+0.1>=-M_PI/2)) beta+=0.1; break;
   case 's': if((beta-0.1<=M_PI/2) && (beta-0.1>=-M_PI/2)) beta-=0.1; break;
   case 'm': alfa+=0.1; break;
@@ -56,7 +56,6 @@ void processKeys(unsigned char c, int xx, int yy) {
   }
   glutPostRedisplay();
 }
-
 
 void renderScene(void) {
     
@@ -106,6 +105,23 @@ void renderScene(void) {
 			float sz = atof(modelos.at(i+3).c_str());
 			glScalef(sx,sy,sz);
 			i+=4;
+		}
+
+		else if(strcmp("ring",modelos.at(i).c_str())==0){
+            		float inr = atof(modelos.at(i+1).c_str());
+            		float outr = atof(modelos.at(i+2).c_str());
+            		int nside = atoi(modelos.at(i+3).c_str());
+            		int ring = atoi(modelos.at(i+4).c_str());
+            		glutSolidTorus(inr,outr,nside,ring);
+            		i+=5;
+        	}
+
+		else if(strcmp("color",modelos.at(i).c_str())==0){
+            		float r = atof(modelos.at(i+1).c_str());
+           		float g = atof(modelos.at(i+2).c_str());
+            		float b = atof(modelos.at(i+3).c_str());
+            		glColor3f(r/255.0,g/255.0,b/255.0);
+            		i+=4;
 		}
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
@@ -171,6 +187,28 @@ void lerXML(TiXmlElement* e){
 					TiXmlAttribute* pA=m->FirstAttribute();
 					modelos.push_back(pA->Value());
 					m=m->NextSiblingElement();
+				}
+				e=e->NextSiblingElement();
+			}
+
+			else if(strcmp("color",e->Value()) == 0){
+				if(e==NULL) printf("Erro no color.\n");
+				modelos.push_back(e->Value());
+				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				while(pAttrib){
+					modelos.push_back(pAttrib->Value());
+					pAttrib=pAttrib->Next();
+				}
+				e=e->NextSiblingElement();
+			}
+
+			else if(strcmp("ring",e->Value()) == 0){
+				if(e==NULL) printf("Erro no translate.\n");
+				modelos.push_back(e->Value());
+				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				while(pAttrib){
+					modelos.push_back(pAttrib->Value());
+					pAttrib=pAttrib->Next();
 				}
 				e=e->NextSiblingElement();
 			}
@@ -260,7 +298,7 @@ int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowPosition(100,100);
-    glutInitWindowSize(800,800);
+    glutInitWindowSize(1200,800);
     glutCreateWindow("Scene");
     
     // Required callback registry 
