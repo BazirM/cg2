@@ -1,12 +1,78 @@
 glColor3ub
 
-SOL - 255, 204, 0
-MERCURIO - 230, 115, 0
-VENUS - 198, 140, 83
-TERRA - 0, 0, 179
-MARTE - 204, 51, 0
-JUPITER - 255, 194, 102
-SATURNO - 255, 240, 179
-URANO - 51, 133, 255
-NEPTUNO - 51, 51, 255
+SOL:
+255
+204
+0
+<color R=255 G=204 B=0 />
+-----
+MERCURIO:
+128
+131
+136
+<color R=128 G=131 B=136 />
+------
+VENUS:
+253
+170
+113
+<color R=253 G=170 B=113 />
+-----
+TERRA:
+19
+120
+161
+<color R=19 G=120 B=161 />
+----
+MARTE:
+207
+47
+22
+<color R=207 G=47 B=22 />
+------
+JUPITER:
+220
+144
+107
+<color R=220 G=144 B=107 />
+------
+SATURNO:
+255
+240
+179
+<color R=255 G=240 B=179 />
+------
+URANO: 
+41
+168
+199
+<color R=41 G=168 B=199 />
+------
+NEPTUNO:
+23
+93
+180
+<color R=23 G=93 B=180 />
 
+
+Código TINYXML
+else if(strcmp("color",e->Value()) == 0){
+				if(e==NULL) printf("Erro no translate.\n");
+				modelos.push_back(e->Value());
+				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				while(pAttrib){
+					modelos.push_back(pAttrib->Value());
+					pAttrib=pAttrib->Next();
+				}
+				e=e->NextSiblingElement();
+			}
+ 
+ Código Render
+         else if(strcmp("color",modelos.at(i).c_str())==0){
+            float r = atof(modelos.at(i+1).c_str());
+            float g = atof(modelos.at(i+2).c_str());
+            float b = atof(modelos.at(i+3).c_str());
+            glColor3f(r/255.0,g/255.0,b/255.0);
+            i+=4;
+        }
+ 
