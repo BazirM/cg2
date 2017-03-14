@@ -1,14 +1,16 @@
 <scene>
 	<group>
 		<scale X="10" Y="10" Z="10" />
+		<color R="255" G="204" B="0" />
 		<models>
-		<model file="sphere.txt" diffR="255" diffG="204" diffB="0" />
+		<model file="sphere.txt" />
 		</models>
 		<group>
 			<translate X="4.03" Z="4.03" />
+			<color R="128" G="131" B="136" />
 			<scale X="0.1" Y="0.1" Z="0.1" />
 			<models>
-			<model file="sphere.txt" diffR="128" diffG="131" diffB="136" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
@@ -18,9 +20,10 @@
 		</group>
 		<group>
 			<translate X="-4.13" Z="9.97" />
+			<color R="253" G="170" B="113" />
 			<scale X="0.32" Y="0.32" Z="0.32" />
 			<models>
-			<model file="sphere.txt" diffR="253" diffG="170" diffB="113" />
+			<model file="sphere.txt" />
 			</models>
 		</group>
 		<group>
@@ -32,14 +35,16 @@
 			<translate Z="-14.9" />
 			<group>
 				<translate X="1.5"/>
+				<color R="217" G="217" B="217" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
-					<model file="sphere.txt" diffR="217" diffG="217" diffB="217" />
+					<model file="sphere.txt" />
 				</models>
 			</group>
+			<color R="19" G="120" B="161" />
 			<scale X="0.3" Y="0.3" Z="0.3" />
 			<models>
-			<model file="sphere.txt" diffR="19" diffG="120" diffB="161" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
@@ -51,21 +56,24 @@
 			<translate Z="20.7" />
 			<group>
 				<translate X="1.5" Y="1.5" />
+				<color R="115" G="115" B="115" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
-					<model file="sphere.txt" diffR="115" diffG="115" diffB="115" />
+					<model file="sphere.txt" />
 				</models>
 			</group>
 			<group>
 				<translate X="1.5" />
+				<color R="217" G="217" B="217" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
-					<model file="sphere.txt" diffR="217" diffG="217" diffB="217" />
+					<model file="sphere.txt" />
 				</models>
 			</group>
+			<color R="207" G="47" B="22" />
 			<scale X="0.25" Y="0.25" Z="0.25" />
 			<models>
-		        <model file="sphere.txt" diffR="207" diffG="47" diffB="22" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
@@ -77,14 +85,16 @@
 			<translate X="-18.17" Z="-18.17" />
 			<group>
 				<translate X="1.5" Y="1.5" />
+				<color R="128" G="128" B="128" />
 				<scale X="0.075" Y="0.075" Z="0.075" />
 				<models>
-					<model file="sphere.txt" diffR="128" diffG="128" diffB="128" />
+					<model file="sphere.txt" />
 				</models>
 			</group>
+			<color R="255" G="179" B="102" />
 			<scale X="0.75" Y="0.75" Z="0.75" />
 			<models>
-			<model file="sphere.txt" diffR="255" diffG="179" diffB="102" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
@@ -96,16 +106,18 @@
 			<translate X="30.7"/>
 			<group>
 				<translate X="1.5" Y="1.5" />
+				<color R="255" G="191" B="128" />
 				<scale X="0.15" Y="0.15" Z="0.15" />
 				<models>
-					<model file="sphere.txt" diffR="255" diffG="191" diffB="128" />
+					<model file="sphere.txt" />
 				</models>
 			</group>
 			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
+			<color R="255" G="240" B="179" />
 			<ring inr="0.3" outr="4" s="2" rng="30" />
 			<scale X="0.65" Y="0.65" Z="0.65" />
 			<models>
-			<model file="sphere.txt" diffR="255" diffG="240" diffB="179" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
@@ -115,9 +127,10 @@
 		</group>
 		<group>
 			<translate X="13.66" Z="32.98" />
+			<color R="41" G="168" B="199" />
 			<scale X="0.50" Y="0.50" Z="0.50" />
 			<models>
-			<model file="sphere.txt" diffR="41" diffG="168" diffB="199" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
@@ -129,14 +142,16 @@
 			<translate X="28.77" Z="28.77" />
 			<group>
 				<translate X="1.5" Y="1.5" />
+				<color R="217" G="217" B="217" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
-					<model file="sphere.txt" diffR="217" diffG="217" diffB="217" />
+					<model file="sphere.txt" />
 				</models>
 			</group>
+			<color R="23" G="93" B="180" />
 			<scale X="0.45" Y="0.45" Z="0.45" />
 			<models>
-			<model file="sphere.txt" diffR="23" diffG="93" diffB="180" />
+			<model file="sphere.txt" />
 			</models>	
 		</group>
 		<group>
