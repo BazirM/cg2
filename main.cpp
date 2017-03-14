@@ -69,7 +69,7 @@ void renderScene(void) {
               0.0f,1.0f,0.0f);
     
     //glPolygonMode(GL_FRONT,GL_LINE);
-    glColor3f(17.0/255.0,154.9/255.0,205.0/255.0);
+    //glColor3f(17.0/255.0,154.9/255.0,205.0/255.0);
 
     for(int i=0;i<modelos.size();){
 		if(strcmp("group",modelos.at(i).c_str())==0){
@@ -172,6 +172,11 @@ void renderScene(void) {
 
 void lerXML(TiXmlElement* e){
 
+	const char* pAttrib;
+	const char* s[3] = {"X", "Y", "Z"};
+	const char* t[4] = {"angle", "axisX", "axisY", "axisZ"};
+	const char* mod[4] = {"file", "diffR", "diffG", "diffB"};
+
 	while(e){				
 			if(strcmp("group",e->Value()) == 0){
 				if(e==NULL) printf("Erro no group.\n");
@@ -183,15 +188,24 @@ void lerXML(TiXmlElement* e){
 				if(e==NULL) printf("Erro no models.\n");
 				TiXmlElement* m = e->FirstChildElement("model");
 				while(m){
+					modelos.push_back("color");
+					for(int i=1;i<4;i++){
+						pAttrib = m->Attribute(mod[i]);
+						if(pAttrib)
+							modelos.push_back(pAttrib);
+						else modelos.push_back("255");
+					}
 					modelos.push_back(m->Value());
-					TiXmlAttribute* pA=m->FirstAttribute();
-					modelos.push_back(pA->Value());
+					/*TiXmlAttribute* pA=m->FirstAttribute();
+					modelos.push_back(pA->Value());*/
+					//pAttrib = m->Attribute(mod[0]);
+					modelos.push_back(m->Attribute(mod[0]));
 					m=m->NextSiblingElement();
 				}
 				e=e->NextSiblingElement();
 			}
 
-			else if(strcmp("color",e->Value()) == 0){
+			/*else if(strcmp("color",e->Value()) == 0){
 				if(e==NULL) printf("Erro no color.\n");
 				modelos.push_back(e->Value());
 				TiXmlAttribute* pAttrib=e->FirstAttribute();
@@ -200,7 +214,7 @@ void lerXML(TiXmlElement* e){
 					pAttrib=pAttrib->Next();
 				}
 				e=e->NextSiblingElement();
-			}
+			}*/
 
 			else if(strcmp("ring",e->Value()) == 0){
 				if(e==NULL) printf("Erro no translate.\n");
@@ -216,10 +230,16 @@ void lerXML(TiXmlElement* e){
 			else if(strcmp("translate",e->Value()) == 0){
 				if(e==NULL) printf("Erro no translate.\n");
 				modelos.push_back(e->Value());
-				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				/*TiXmlAttribute* pAttrib=e->FirstAttribute();
 				while(pAttrib){
 					modelos.push_back(pAttrib->Value());
 					pAttrib=pAttrib->Next();
+				}*/
+				for(int i=0;i<3;i++){
+					pAttrib = e->Attribute(s[i]);
+					if(pAttrib)
+						modelos.push_back(pAttrib);
+					else modelos.push_back("0.0");
 				}
 				e=e->NextSiblingElement();
 			}
@@ -227,22 +247,34 @@ void lerXML(TiXmlElement* e){
 			else if(strcmp("scale",e->Value()) == 0){
 				if(e==NULL) printf("Erro no scale.\n");
 				modelos.push_back(e->Value());
-				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				for(int i=0;i<3;i++){
+					pAttrib = e->Attribute(s[i]);
+					if(pAttrib)
+						modelos.push_back(pAttrib);
+					else modelos.push_back("0.0");
+				}
+				/*TiXmlAttribute* pAttrib=e->FirstAttribute();
 				while(pAttrib){
 					modelos.push_back(pAttrib->Value());
 					pAttrib=pAttrib->Next();
-				}
+				}*/
 				e=e->NextSiblingElement();
 			}
 
 			else if(strcmp("rotate",e->Value()) == 0){
 				if(e==NULL) printf("Erro no rotate.\n");
 				modelos.push_back(e->Value());
-				TiXmlAttribute* pAttrib=e->FirstAttribute();
+				for(int i=0;i<4;i++){
+					pAttrib = e->Attribute(t[i]);
+					if(pAttrib)
+						modelos.push_back(pAttrib);
+					else modelos.push_back("0.0");
+				}
+				/*TiXmlAttribute* pAttrib=e->FirstAttribute();
 				while(pAttrib){
 					modelos.push_back(pAttrib->Value());
 					pAttrib=pAttrib->Next();
-				}
+				}*/
 				e=e->NextSiblingElement();
 			}
 
@@ -263,11 +295,7 @@ int main(int argc, char* argv[]) {
 		TiXmlElement* e = titleElement->FirstChildElement();
 		lerXML(e);
 	}
-	else
-	{
-		printf("Failed to load file\n");
-	}
-
+	else printf("Failed to load file\n");
 
 	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());	
 
