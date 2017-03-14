@@ -6,7 +6,7 @@
 		<model file="sphere.txt" />
 		</models>
 		<group>
-			<translate X="4.03" Y="0" Z="4.03" />
+			<translate X="4.03" Z="4.03" />
 			<color R="128" G="131" B="136" />
 			<scale X="0.1" Y="0.1" Z="0.1" />
 			<models>
@@ -15,11 +15,11 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="5.7" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="-4.13" Y="0" Z="9.97" />
+			<translate X="-4.13" Z="9.97" />
 			<color R="253" G="170" B="113" />
 			<scale X="0.32" Y="0.32" Z="0.32" />
 			<models>
@@ -28,13 +28,13 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="10.8" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="0" Y="0" Z="-14.9" />
+			<translate Z="-14.9" />
 			<group>
-				<translate X="1.5" Y="0" Z="0" />
+				<translate X="1.5"/>
 				<color R="217" G="217" B="217" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
@@ -49,13 +49,13 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="14.9" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="0" Y="0" Z="20.7" />
+			<translate Z="20.7" />
 			<group>
-				<translate X="1.5" Y="1.5" Z="0" />
+				<translate X="1.5" Y="1.5" />
 				<color R="115" G="115" B="115" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
@@ -63,7 +63,7 @@
 				</models>
 			</group>
 			<group>
-				<translate X="1.5" Y="0" Z="0" />
+				<translate X="1.5" />
 				<color R="217" G="217" B="217" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
@@ -78,13 +78,13 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="20.7" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="-18.17" Y="0" Z="-18.17" />
+			<translate X="-18.17" Z="-18.17" />
 			<group>
-				<translate X="1.5" Y="1.5" Z="0" />
+				<translate X="1.5" Y="1.5" />
 				<color R="128" G="128" B="128" />
 				<scale X="0.075" Y="0.075" Z="0.075" />
 				<models>
@@ -99,20 +99,20 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="25.7" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="30.7" Y="0" Z="0" />
+			<translate X="30.7"/>
 			<group>
-				<translate X="1.5" Y="1.5" Z="0" />
+				<translate X="1.5" Y="1.5" />
 				<color R="255" G="191" B="128" />
 				<scale X="0.15" Y="0.15" Z="0.15" />
 				<models>
 					<model file="sphere.txt" />
 				</models>
 			</group>
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<color R="255" G="240" B="179" />
 			<ring inr="0.3" outr="4" s="2" rng="30" />
 			<scale X="0.65" Y="0.65" Z="0.65" />
@@ -122,11 +122,11 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="30.7" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="13.66" Y="0" Z="32.98" />
+			<translate X="13.66" Z="32.98" />
 			<color R="41" G="168" B="199" />
 			<scale X="0.50" Y="0.50" Z="0.50" />
 			<models>
@@ -135,13 +135,13 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="35.7" s="2" rng="30" />
 		</group>
 		<group>
-			<translate X="28.77" Y="0" Z="28.77" />
+			<translate X="28.77" Z="28.77" />
 			<group>
-				<translate X="1.5" Y="1.5" Z="0" />
+				<translate X="1.5" Y="1.5" />
 				<color R="217" G="217" B="217" />
 				<scale X="0.05" Y="0.05" Z="0.05" />
 				<models>
@@ -156,7 +156,7 @@
 		</group>
 		<group>
 			<color R="242" G="242" B="242" />
-			<rotate Ang="90" X="1" Y="0" Z="0" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
 			<ring inr="0.03" outr="40.7" s="2" rng="30" />
 		</group>	
 	</group>
