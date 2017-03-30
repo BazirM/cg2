@@ -123,27 +123,27 @@ void renderScene(void) {
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
 			int nvertices;
-			long double v1,v2,v3,v4,v5,v6,v7,v8,v9;
+			long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
 			ifstream fich;
 			fich.open(modelos.at(i+1).c_str());
     			if (fich.is_open()){
 			fich >> nvertices;
         		for(int k = 0; k < nvertices; k=k+3){
-				fich >> v1;
-				fich >> v2;
-				fich >> v3;
+				fich >> p1;
+				fich >> p2;
+				fich >> p3;
 
-				fich >> v4;
-				fich >> v5;
-				fich >> v6;
+				fich >> p4;
+				fich >> p5;
+				fich >> p6;
 
-				fich >> v7;
-				fich >> v8;
-				fich >> v9;
+				fich >> p7;
+				fich >> p8;
+				fich >> p9;
 				glBegin(GL_TRIANGLES);
-				glVertex3f(v1, v2, v3);
-				glVertex3f(v4, v5, v6);
-				glVertex3f(v7, v8, v9);
+				glVertex3f(p1, p2, p3);
+				glVertex3f(p4, p5, p6);
+				glVertex3f(p7, p8, p9);
 				glEnd();
 			}
 		     	}
