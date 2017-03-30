@@ -67,9 +67,6 @@ void renderScene(void) {
     gluLookAt(raio*sin(alfa)*cos(beta),raio*sin(beta),raio*cos(beta)*cos(alfa),
               0.0,0.0,0.0,
               0.0f,1.0f,0.0f);
-    
-    //glPolygonMode(GL_FRONT,GL_LINE);
-    //glColor3f(17.0/255.0,154.9/255.0,205.0/255.0);
 
     for(int i=0;i<modelos.size();){
 		if(strcmp("group",modelos.at(i).c_str())==0){
@@ -126,41 +123,31 @@ void renderScene(void) {
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
 			int nvertices;
-			long double f1;
-			long double f2;
-			long double f3;
-
-			long double f4;
-			long double f5;
-			long double f6;
-
-			long double f7;
-			long double f8;
-			long double f9;
-			ifstream modelo;
-			modelo.open(modelos.at(i+1).c_str());
-    			if (modelo.is_open()){
-			modelo >> nvertices;
+			long double v1,v2,v3,v4,v5,v6,v7,v8,v9;
+			ifstream fich;
+			fich.open(modelos.at(i+1).c_str());
+    			if (fich.is_open()){
+			fich >> nvertices;
         		for(int k = 0; k < nvertices; k=k+3){
-				modelo >> f1;
-				modelo >> f2;
-				modelo >> f3;
+				fich >> v1;
+				fich >> v2;
+				fich >> v3;
 
-				modelo >> f4;
-				modelo >> f5;
-				modelo >> f6;
+				fich >> v4;
+				fich >> v5;
+				fich >> v6;
 
-				modelo >> f7;
-				modelo >> f8;
-				modelo >> f9;
+				fich >> v7;
+				fich >> v8;
+				fich >> v9;
 				glBegin(GL_TRIANGLES);
-				glVertex3f(f1, f2, f3);
-				glVertex3f(f4, f5, f6);
-				glVertex3f(f7, f8, f9);
+				glVertex3f(v1, v2, v3);
+				glVertex3f(v4, v5, v6);
+				glVertex3f(v7, v8, v9);
 				glEnd();
 			}
 		     	}
-		 modelo.close();
+		 fich.close();
 		 i=i+2;
 	     }
     }
@@ -196,25 +183,11 @@ void lerXML(TiXmlElement* e){
 						else modelos.push_back("255");
 					}
 					modelos.push_back(m->Value());
-					/*TiXmlAttribute* pA=m->FirstAttribute();
-					modelos.push_back(pA->Value());*/
-					//pAttrib = m->Attribute(mod[0]);
 					modelos.push_back(m->Attribute(mod[0]));
 					m=m->NextSiblingElement();
 				}
 				e=e->NextSiblingElement();
 			}
-
-			/*else if(strcmp("color",e->Value()) == 0){
-				if(e==NULL) printf("Erro no color.\n");
-				modelos.push_back(e->Value());
-				TiXmlAttribute* pAttrib=e->FirstAttribute();
-				while(pAttrib){
-					modelos.push_back(pAttrib->Value());
-					pAttrib=pAttrib->Next();
-				}
-				e=e->NextSiblingElement();
-			}*/
 
 			else if(strcmp("ring",e->Value()) == 0){
 				if(e==NULL) printf("Erro no translate.\n");
@@ -230,11 +203,6 @@ void lerXML(TiXmlElement* e){
 			else if(strcmp("translate",e->Value()) == 0){
 				if(e==NULL) printf("Erro no translate.\n");
 				modelos.push_back(e->Value());
-				/*TiXmlAttribute* pAttrib=e->FirstAttribute();
-				while(pAttrib){
-					modelos.push_back(pAttrib->Value());
-					pAttrib=pAttrib->Next();
-				}*/
 				for(int i=0;i<3;i++){
 					pAttrib = e->Attribute(s[i]);
 					if(pAttrib)
@@ -253,11 +221,6 @@ void lerXML(TiXmlElement* e){
 						modelos.push_back(pAttrib);
 					else modelos.push_back("0.0");
 				}
-				/*TiXmlAttribute* pAttrib=e->FirstAttribute();
-				while(pAttrib){
-					modelos.push_back(pAttrib->Value());
-					pAttrib=pAttrib->Next();
-				}*/
 				e=e->NextSiblingElement();
 			}
 
@@ -270,11 +233,6 @@ void lerXML(TiXmlElement* e){
 						modelos.push_back(pAttrib);
 					else modelos.push_back("0.0");
 				}
-				/*TiXmlAttribute* pAttrib=e->FirstAttribute();
-				while(pAttrib){
-					modelos.push_back(pAttrib->Value());
-					pAttrib=pAttrib->Next();
-				}*/
 				e=e->NextSiblingElement();
 			}
 
@@ -296,31 +254,6 @@ int main(int argc, char* argv[]) {
 		lerXML(e);
 	}
 	else printf("Failed to load file\n");
-
-	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());	
-
-    	/*int nvertices;
-    	ifstream modelo;
-    	for(int j = 0; j<modelos.size(); j++){
-    		modelo.open(modelos.at(j).c_str());
-    		if (modelo.is_open()){
-		modelo >> nvertices;
-        	for(int i = 0; i < nvertices; i++){
-	      	vector <long double> verTri;
-	      	long double f;
-	      	modelo >> f;
-	      	verTri.push_back(f);
-	      	modelo >> f;
-	      	verTri.push_back(f);
-	      	modelo >> f;
-              	verTri.push_back(f);
-
-              	vert.push_back(verTri);
-        }
-	nv+=nvertices;
-	modelo.close();
-    }
-    }*/
     
     // init GLUT and the window
     glutInit(&argc, argv);
