@@ -21,7 +21,8 @@
 			</models>	
 		</group>
 		<group>
-			<translate time=60 >
+			<rotate angle="15" axisX="0" axisY="0" axisZ="1" />
+			<translate time=10 >
 				<point X="0.0" Z="9.97" />
 				<point X="7.04985" Z="7.04985" />
 				<point X="9.97" Z="6.10486e-16" />
@@ -32,7 +33,7 @@
 				<point X="-7.04985" Z="7.04985" />
 			</translate>
 			<scale X="0.32" Y="0.32" Z="0.32" />
-			<rotate time=5 axisX="0" axisY="1" axisZ="0" />
+			<rotate time="5" axisX="0" axisY="1" axisZ="0" />
 			<models>
 			<model file="sphere.txt" diffR="253" diffG="170" diffB="113" />
 			</models>
