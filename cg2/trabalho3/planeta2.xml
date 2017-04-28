@@ -21,8 +21,26 @@
 			</models>	
 		</group>
 		<group>
+			<rotate angle="-25" axisX="0" axisY="0" axisZ="1" />
+			<translate time=50 >
+				<point X="0.0" Y="0.0" Z="7.02" />
+				<point X="4.96389" Y="0.0" Z="4.96389" />
+				<point X="7.02" Y="0.0" Z="4.29851e-16" />
+				<point X="4.96389" Y="0.0" Z="-4.96389" />
+				<point X="8.59702e-16" Y="0.0" Z="-7.02" />
+				<point X="-4.96389" Y="0.0" Z="-4.96389" />
+				<point X="-7.02" Y="0.0" Z="-1.28955e-15" />
+				<point X="-4.96389" Y="0.0" Z="4.96389" />
+			</translate>
+			<scale X="0.05" Y="0.05" Z="0.05" />
+			<rotate angle="90" axisX="1" axisY="0" axisZ="0" />
+			<patches>
+			<patch file="teap.txt" diffR="204" diffG="0" diffB="0" />
+			</patches> 
+		</group>
+		<group>
 			<rotate angle="15" axisX="0" axisY="0" axisZ="1" />
-			<translate time=10 >
+			<translate time=60 >
 				<point X="0.0" Z="9.97" />
 				<point X="7.04985" Z="7.04985" />
 				<point X="9.97" Z="6.10486e-16" />

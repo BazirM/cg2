@@ -29,21 +29,27 @@ using namespace std;
 float alfa = M_PI/2, beta = M_PI/6, raio = 200.0;
 vector< std::vector<long double> > vert;
 int i = 0;
-float x,y,z;
+float x;
+float y[3]={0,-1,0};
 vector<std::string> modelos;
 vector<float> pontosT;
 int nvertices;
+int nvertices2;
+int tess;
 int inicioVertices = 0;
 int preenchido = 0;
-
+int preenchido2 = 0;
 float timer;
 
 float temp = 0.0;
 float tempAux = 0.0;
 
 vector<GLfloat> vertices;
+vector<GLfloat> verticesTP;
 
 GLuint buffer;
+
+GLuint buffer2;
 
 int cont = 0;
 int contSoma = 0;
@@ -219,6 +225,24 @@ void desenhaModelo(int tamM, int tamMax){
 
 }
 
+void desenhaTeap(int tess){
+
+	glGenBuffers(1,&buffer2);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer2);
+	glBufferData(GL_ARRAY_BUFFER, verticesTP.size() * sizeof(float), &verticesTP[0], GL_STATIC_DRAW);
+
+	glVertexPointer(3,GL_FLOAT,0,0);
+	for(int i=0;i<verticesTP.size();i+=tess+1){
+			glDrawArrays(GL_LINE_STRIP,i,tess+1);
+	}
+
+	//for(int i=0;i<verticesTP.size();i++) printf("%f\n",verticesTP.at(i));
+
+
+}
+
+
+
 void renderScene(void) {
 
 	static float t = 0;
@@ -261,9 +285,16 @@ void renderScene(void) {
 			timer = glutGet(GLUT_ELAPSED_TIME);
 			tempo = atof(modelos.at(i+1).c_str());
 			cont = atoi(modelos.at(i+2).c_str());
+		    glColor3f(255.0/255.0,255.0/255.0,255.0/255.0);
 			renderCatmullRomCurve();
 			getGlobalCatmullRomPoint(timer/(tempo*1000),res,deriv);
+			normalize(deriv);
+			cross(deriv,y,z);
+			normalize(z);
+			cross(z,deriv,y);
 			glTranslatef(res[0],res[1],res[2]);
+			buildRotMatrix(deriv,y,z,m);
+			glMultMatrixf(m); 
 			i+=3;
 		}
 
@@ -317,6 +348,31 @@ void renderScene(void) {
             		i+=4;
 		}
 
+		else if(strcmp("patch",modelos.at(i).c_str())==0){
+			long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
+			ifstream fich;
+			fich.open(modelos.at(i+1).c_str());
+			if(preenchido2==0){
+    		if (fich.is_open()){
+			fich >> nvertices2;
+			fich >> tess;
+        		for(int k = 0; k < nvertices2; k++){
+				fich >> p1;
+				fich >> p2;
+				fich >> p3;
+
+				verticesTP.push_back(p1);
+				verticesTP.push_back(p2);
+				verticesTP.push_back(p3);
+				}
+
+		     	}
+		     }
+		 fich.close();
+		 desenhaTeap(tess);
+		 i=i+2;
+	     }
+
 		else if(strcmp("model",modelos.at(i).c_str())==0){
 			long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
 			ifstream fich;
@@ -353,6 +409,7 @@ void renderScene(void) {
 				vertices.push_back(p8);
 				vertices.push_back(p9);
 				}
+				//for(int i=0;i<verticesTP.size();i++) printf("%f\n",verticesTP.at(i));
 		     	}
 		     }
 		 fich.close();
@@ -362,6 +419,7 @@ void renderScene(void) {
 	     }
     }
     preenchido = 1;
+    preenchido2 = 1;
 
     // End of frame
     glutSwapBuffers();
@@ -387,6 +445,24 @@ void lerXML(TiXmlElement* e){
 			else if(strcmp("models",e->Value()) == 0){
 				if(e==NULL) printf("Erro no models.\n");
 				TiXmlElement* m = e->FirstChildElement("model");
+				while(m){
+					modelos.push_back("color");
+					for(int i=1;i<4;i++){
+						pAttrib = m->Attribute(mod[i]);
+						if(pAttrib)
+							modelos.push_back(pAttrib);
+						else modelos.push_back("255");
+					}
+					modelos.push_back(m->Value());
+					modelos.push_back(m->Attribute(mod[0]));
+					m=m->NextSiblingElement();
+				}
+				e=e->NextSiblingElement();
+			}
+
+			else if(strcmp("patches",e->Value()) == 0){
+				if(e==NULL) printf("Erro no patches.\n");
+				TiXmlElement* m = e->FirstChildElement("patch");
 				while(m){
 					modelos.push_back("color");
 					for(int i=1;i<4;i++){
