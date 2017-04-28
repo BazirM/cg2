@@ -11,6 +11,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Este desenha todo o array por cada frame, por isso é que os modelos são desenhados a mexer;
+// faz o desenho de tudo uma vez por frame.
+
+// Tem o timer agora para tratar das rotaçoes e translaçoes com time.
+// 1 segundo são 1000 milisegundos e o gluGet obtém o tempo em milisegundos.
+// Quanto maior for o time, mais lento são as rotações/translações, daí (timer/(1000*tempo))
+
+// Se o tempo = 1, ou seja se quiser fazer uma rotação completa/andar a orbita inteira em 1 segundo, entao o l = (timer/1000) começa em 0 e demora 1 segundo a chegar a l=1.
+// Se tempo = 10, entao l = (timer/1000*10) entao para chegar de 0 a 1 demora 10 segundos (por causa do /10).
+
+// Rotação -> mesma fórmula só que é *360 para dar o angulo de rotação, ou seja, se tempo = 1, entao l = (timer/100)*360 demora 1 segundo a ter de l=0 a l=360.
+
+
 using namespace std;
 #define POINT_COUNT 5
 float alfa = M_PI/2, beta = M_PI/6, raio = 200.0;
@@ -22,6 +35,11 @@ vector<float> pontosT;
 int nvertices;
 int inicioVertices = 0;
 int preenchido = 0;
+
+float timer;
+
+float temp = 0.0;
+float tempAux = 0.0;
 
 vector<GLfloat> vertices;
 
@@ -119,7 +137,7 @@ void getGlobalCatmullRomPoint(float gt, float *res, float *deriv) {
 	t = t - index; // where within  the segment
 
 	// indices store the points
-	int indices[4]; 
+	int indices[4];
 	indices[0] = ((index + cont-1)%cont) + contSoma;	
 	indices[1] = ((indices[0]+1)%cont) + contSoma;
 	indices[2] = ((indices[1]+1)%cont) + contSoma; 
@@ -186,14 +204,16 @@ void processKeys(unsigned char c, int xx, int yy) {
   glutPostRedisplay();
 }
 
-void desenhaModelo(){
+// tamM é o indice inicial para desenhar e tamMax é o numero de indices do buffer que vai usar para desenhar
+// pelo que parece também dá se usar de 0 a vertices.size()
+void desenhaModelo(int tamM, int tamMax){
 
 	glGenBuffers(1,&buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
 	glVertexPointer(3,GL_FLOAT,0,0);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDrawArrays(GL_TRIANGLES, tamM, tamMax);
 
 
 
@@ -207,8 +227,11 @@ void renderScene(void) {
 	float m[16]; 
 	float z[3];
 
+	int tamB = 0;
+
 	contSoma = 0;
 	cont = 0;
+
 
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -235,15 +258,32 @@ void renderScene(void) {
 
 		else if(strcmp("translate",modelos.at(i).c_str())==0){
 			contSoma = contSoma + cont;
+			timer = glutGet(GLUT_ELAPSED_TIME);
 			tempo = atof(modelos.at(i+1).c_str());
 			cont = atoi(modelos.at(i+2).c_str());
 			renderCatmullRomCurve();
-			getGlobalCatmullRomPoint(t*tempo,res,deriv);
+			getGlobalCatmullRomPoint(timer/(tempo*1000),res,deriv);
 			glTranslatef(res[0],res[1],res[2]);
 			i+=3;
 		}
 
 		else if(strcmp("rotate",modelos.at(i).c_str())==0){
+			timer = glutGet(GLUT_ELAPSED_TIME);
+			float ang;
+			temp = atof(modelos.at(i+1).c_str());
+			/*printf("%f %f %f\n",timer,timer/(temp*1000)*360, timer/(temp*1000));
+			if(tempAux==0.0) tempAux = temp;
+			if(tempAux!=0.0) ang = (360/temp)*(temp - tempAux);*/
+			//float ang = atof(modelos.at(i+1).c_str());
+			float x = atof(modelos.at(i+2).c_str());
+			float y = atof(modelos.at(i+3).c_str());
+			float z = atof(modelos.at(i+4).c_str());
+			//printf("%f\n",timer/(temp*1000)*360);
+			glRotatef(timer/(temp*1000)*360,x,y,z);
+			i+=5;
+		}
+
+		else if(strcmp("rotateA",modelos.at(i).c_str())==0){
 			float ang = atof(modelos.at(i+1).c_str());
 			float x = atof(modelos.at(i+2).c_str());
 			float y = atof(modelos.at(i+3).c_str());
@@ -313,10 +353,11 @@ void renderScene(void) {
 				vertices.push_back(p8);
 				vertices.push_back(p9);
 				}
-				desenhaModelo();
 		     	}
-		     } else desenhaModelo();
+		     }
 		 fich.close();
+		 desenhaModelo(tamB, nvertices);
+		 tamB += nvertices;
 		 i=i+2;
 	     }
     }
@@ -324,7 +365,8 @@ void renderScene(void) {
 
     // End of frame
     glutSwapBuffers();
-    t += 0.001;
+    //tempAux --;
+    //t += 0.001;
 }
 
 
@@ -332,7 +374,7 @@ void lerXML(TiXmlElement* e){
 
 	const char* pAttrib;
 	const char* s[3] = {"X", "Y", "Z"};
-	const char* t[4] = {"angle", "axisX", "axisY", "axisZ"};
+	const char* t[4] = {"axisX", "axisY", "axisZ"};
 	const char* mod[4] = {"file", "diffR", "diffG", "diffB"};
 
 	while(e){				
@@ -408,8 +450,10 @@ void lerXML(TiXmlElement* e){
 
 			else if(strcmp("rotate",e->Value()) == 0){
 				if(e==NULL) printf("Erro no rotate.\n");
-				modelos.push_back(e->Value());
-				for(int i=0;i<4;i++){
+				pAttrib = e->Attribute("angle");
+				if(pAttrib) { modelos.push_back("rotateA"); modelos.push_back(pAttrib); }
+				else { pAttrib = e->Attribute("time"); modelos.push_back("rotate"); modelos.push_back(pAttrib); }
+				for(int i=0;i<3;i++){
 					pAttrib = e->Attribute(t[i]);
 					if(pAttrib)
 						modelos.push_back(pAttrib);
@@ -434,6 +478,7 @@ int main(int argc, char* argv[]) {
 		TiXmlElement* titleElement = doc.FirstChildElement( "scene" )->FirstChildElement( "group" );
 		TiXmlElement* e = titleElement->FirstChildElement();
 		lerXML(e);
+
 	}
 	else printf("Failed to load file\n");
 
