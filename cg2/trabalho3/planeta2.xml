@@ -1,0 +1,235 @@
+<scene>
+	<group>
+		<scale X="10" Y="10" Z="10" />
+		<models>
+		<model file="sphere.txt" diffR="255" diffG="204" diffB="0" />
+		</models>
+		<group>
+			<translate time=60 >
+				<point X="0.0" Y="0.0" Z="4.03" />
+				<point X="2.84964" Y="0.0" Z="2.84964" />
+				<point X="4.03" Y="0.0" Z="2.46766e-16" />
+				<point X="2.84964" Y="0.0" Z="-2.84964" />
+				<point X="4.93533e-16" Y="0.0" Z="-4.03" />
+				<point X="-2.84694" Y="0.0" Z="-2.84964" />
+				<point X="-4.03" Y="0.0" Z="-7.40299e-16" />	
+				<point X="-2.84694" Y="0.0" Z="2.84694" />							
+			</translate>
+			<scale X="0.1" Y="0.1" Z="0.1" />
+			<models>
+			<model file="sphere.txt" diffR="128" diffG="131" diffB="136" />
+			</models>	
+		</group>
+		<group>
+			<translate time=60 >
+				<point X="0.0" Z="9.97" />
+				<point X="7.04985" Z="7.04985" />
+				<point X="9.97" Z="6.10486e-16" />
+				<point X="7.04985" Z="-7.04985" />
+				<point X="1.22097e-15" Z="-9.97" />
+				<point X="-7.04985" Z="-7.04985" />
+				<point X="-9.97" Z="-1.83146" />
+				<point X="-7.04985" Z="7.04985" />
+			</translate>
+			<scale X="0.32" Y="0.32" Z="0.32" />
+			<rotate time=5 axisX="0" axisY="1" axisZ="0" />
+			<models>
+			<model file="sphere.txt" diffR="253" diffG="170" diffB="113" />
+			</models>
+		</group>
+		<group>
+			<translate time=10 > 
+				<point X="0.0" Z="14.9" />
+				<point X="10.5359" Z="10.5359" />
+				<point X="14.9" Z="9.12362e-16" />
+				<point X="10.5359" Z="-10.5359" />
+				<point X="1.82472e-15" Z="-14.9" />
+				<point X="-10.5359" Z="-10.5359" />
+				<point X="-14.9" Z="-2.73709e-15" />
+				<point X="-10.5359" Z="10.5359" />		
+			</translate>
+			<group>
+				<translate time=10 >
+					<point X="0.0" Z="1.5" />
+					<point X="1.06066" Z="1.06066" />
+					<point X="1.5" Z="9.18485e-17" />
+					<point X="1.06066" Z="-1.06066" />
+					<point X="1.83697e-16" Z="-1.5" />
+					<point X="-1.06066" Z="-1.06066" />
+					<point X="-1.5" Z="-2.75546e-16" />
+					<point X="-1.06066" Z="1.06066" />
+				</translate>
+				<scale X="0.05" Y="0.05" Z="0.05" />
+				<models>
+					<model file="sphere.txt" diffR="217" diffG="217" diffB="217" />
+				</models>
+			</group>
+			<scale X="0.3" Y="0.3" Z="0.3" />
+			<models>
+			<model file="sphere.txt" diffR="19" diffG="120" diffB="161" />
+			</models>	
+		</group>
+		<group>
+			<translate time=10 >
+				<point X="0.0" Y="0.0" Z="20.7" />
+				<point X="14.6371" Y="0.0" Z="14.6371" />
+				<point X="20.7" Y="0.0" Z="1.26751e-15" />
+				<point X="14.6371" Y="0.0" Z="-14.6371" />
+				<point X="2.53502e-15" Y="0.0" Z="-20.7" />
+				<point X="-14.6371" Y="0.0" Z="-14.6371" />
+				<point X="-20.7" Y="0.0" Z="-3.80253e-15" />
+				<point X="-14.6371" Y="0.0" Z="14.6371" />
+			</translate>
+			<group>
+				<translate time=10 >
+					<point X="0.0" Y="0.0" Z="2.0" />
+					<point X="1.41421" Y="0.0" Z="1.41421" />
+					<point X="2.0" Y="0.0" Z="1.22465e-16" />
+					<point X="1.41421" Y="0.0" Z="-1.41421" />
+					<point X="2.44929e-16" Y="0.0" Z="-2.0" />
+					<point X="-1.41421" Y="0.0" Z="-1.41421" />
+					<point X="-2.0" Y="0.0" Z="-3.67394e-16" />
+					<point X="-1.41421" Y="0.0" Z="1.41421" />
+
+				</translate>
+				<scale X="0.05" Y="0.05" Z="0.05" />
+				<models>
+					<model file="sphere.txt" diffR="115" diffG="115" diffB="115" />
+				</models>
+			</group>
+			<group>
+				<translate time=10 >
+					<point X="0.0" Y="0.0" Z="1.5" />
+					<point X="1.06066" Y="0.0" Z="1.06066" />
+					<point X="1.5" Y="0.0" Z="9.18485e-17" />
+					<point X="1.06066" Y="0.0" Z="-1.06066" />
+					<point X="1.83697e-16" Y="0.0" Z="-1.5" />
+					<point X="-1.06066" Y="0.0" Z="-1.06066" />
+					<point X="-1.5" Y="0.0" Z="-2.75546e-16" />
+					<point X="-1.06066" Y="0.0" Z="1.06066" />
+				</translate>
+				<scale X="0.05" Y="0.05" Z="0.05" />
+				<models>
+					<model file="sphere.txt" diffR="217" diffG="217" diffB="217" />
+				</models>
+			</group>
+		    <scale X="0.25" Y="0.25" Z="0.25" />
+		    <models>
+		    <model file="sphere.txt" diffR="207" diffG="47" diffB="22" />
+		    </models>
+		</group>
+			<group>
+			<translate time=10 > 
+				<point X="0.0" Z="25.7" />
+				<point X="18.1726" Z="18.1726" />
+				<point X="25.7" Z="1.57367e-15" />
+				<point X="18.1726" Z="-18.1726" />
+				<point X="3.14734e-15" Z="-25.7" />
+				<point X="-18.1726" Z="-18.1726" />
+				<point X="-25.7" Z="-4.72101e-15" />
+				<point X="-18.1726" Z="18.1726" />
+			</translate>
+			<group>
+				<translate time=10 >
+					<point X="0.0" Y="0.0" Z="1.5" />
+					<point X="1.06066" Y="0.0" Z="1.06066" />
+					<point X="1.5" Y="0.0" Z="9.18485e-17" />
+					<point X="1.06066" Y="0.0" Z="-1.06066" />
+					<point X="1.83697e-16" Y="0.0" Z="-1.5" />
+					<point X="-1.06066" Y="0.0" Z="-1.06066" />
+					<point X="-1.5" Y="0.0" Z="-2.75546e-16" />
+					<point X="-1.06066" Y="0.0" Z="1.06066" />
+				</translate>
+				<scale X="0.075" Y="0.075" Z="0.075" />
+				<models>
+					<model file="sphere.txt" diffR="218" diffG="218" diffB="218" />
+				</models>
+			</group>
+			<scale X="0.75" Y="0.75" Z="0.75" />
+			<models>
+			<model file="sphere.txt" diffR="255" diffG="179" diffB="102" />
+			</models>	
+		</group>
+		<group>
+			<translate time=10 >
+				<point X="0.0" Z="30.7" />
+				<point X="21.7082" Z="21.7082" />
+				<point X="30.7" Z="1.87983e-15" />
+				<point X="21.7082" Z="-21.7082" />
+				<point X="3.75967e-15" Z="-30.7" />
+				<point X="-21.7082" Z="-21.7082" />
+				<point X="-30.7" Z="-5.6395e-15" />
+				<point X="-21.7082" Z="21.7082" />
+			</translate>
+			<group>
+				<translate time=10 >
+					<point X="0.0" Z="2.0" />
+					<point X="1.41421" Z="1.41421" />
+					<point X="2.0" Z="1.22465e-16" />
+					<point X="1.41421" Z="-1.41421" />
+					<point X="2.44929e-16" Z="-2.0" />
+					<point X="-1.41421" Z="-1.41421" />
+					<point X="-2.0" Z="-3.67394e-16" />
+					<point X="-1.41421" Z="1.41421" />
+				</translate>
+
+				<scale X="0.15" Y="0.15" Z="0.15" />
+				<models>
+					<model file="sphere.txt" diffR="255" diffG="191" diffB="128" />
+				</models>
+			</group>
+			<scale X="0.65" Y="0.65" Z="0.65" />
+			<models>
+				<model file="sphere.txt" diffR="255" diffG="240" diffB="179" />
+			</models>
+		</group>
+		<group>
+			<translate time=25 >
+				<point X="0.0" Z="35.7" />
+				<point X="25.2437" Z="25.2437" />
+				<point X="35.7" Z="2.18599e-15" />
+				<point X="25.2437" Z="-25.2437" />
+				<point X="4.37199e-15" Z="-35.7" />
+				<point X="-25.2437" Z="-25.2437" />
+				<point X="-35.7" Z="-6.55798e-15" />
+				<point X="-25.2437" Z="25.2437" />
+			</translate>
+			<scale X="0.50" Y="0.50" Z="0.50" />
+			<models>
+				<model file="sphere.txt" diffR="41" diffG="168" diffB="199" />
+			</models>
+		</group>
+		<group>
+			<translate time=35 >
+				<point X="0.0" Z="40.7" />
+				<point X="28.7792" Z="28.7792" />
+				<point X="40.7" Z="2.49216e-15" />
+				<point X="28.7792" Z="-28.7792" />
+				<point X="4.98431e-15" Z="-40.7" />
+				<point X="-28.7792" Z="-28.7792" />
+				<point X="-40.7" Z="-7.47647e-15" />
+				<point X="-28.7792" Z="28.7792" />
+			</translate>
+			<group>
+				<translate time=50 >
+					<point X="0.0" Z="2.0" />
+					<point X="1.41421" Z="1.41421" />
+					<point X="2.0" Z="1.22465e-16" />
+					<point X="1.41421" Z="-1.41421" />
+					<point X="2.44929e-16" Z="-2.0" />
+					<point X="-1.41421" Z="-1.41421" />
+					<point X="-2.0" Z="-3.67394e-16" />
+					<point X="-1.41421" Z="1.41421" />
+				</translate>
+				<scale X="0.05" Y="0.05" Z="0.05" />
+				<models>
+					<model file="sphere.txt" diffR="217" diffG="217" diffB="217" />
+				</models>
+			</group>
+			<scale X="0.45" Y="0.45" Z="0.45" />
+			<models>
+				<model file="sphere.txt" diffR="23" diffG="93" diffB="180" />
+			</models>
+		</group>
+	</group>
+</scene>
