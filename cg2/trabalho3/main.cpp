@@ -37,8 +37,6 @@ int nvertices;
 int nvertices2;
 int tess;
 int inicioVertices = 0;
-int preenchido = 0;
-int preenchido2 = 0;
 float timer;
 
 float temp = 0.0;
@@ -220,6 +218,7 @@ void desenhaModelo(int tamM, int tamMax){
 
 	glVertexPointer(3,GL_FLOAT,0,0);
 	glDrawArrays(GL_TRIANGLES, tamM, tamMax);
+	//glDrawArrays(GL_TRIANGLES, 0, vertices.size());	//ta a desenhar como o anterior
 
 
 
@@ -294,7 +293,7 @@ void renderScene(void) {
 			cross(z,deriv,y);
 			glTranslatef(res[0],res[1],res[2]);
 			buildRotMatrix(deriv,y,z,m);
-			glMultMatrixf(m); 
+			glMultMatrixf(m);
 			i+=3;
 		}
 
@@ -302,14 +301,9 @@ void renderScene(void) {
 			timer = glutGet(GLUT_ELAPSED_TIME);
 			float ang;
 			temp = atof(modelos.at(i+1).c_str());
-			/*printf("%f %f %f\n",timer,timer/(temp*1000)*360, timer/(temp*1000));
-			if(tempAux==0.0) tempAux = temp;
-			if(tempAux!=0.0) ang = (360/temp)*(temp - tempAux);*/
-			//float ang = atof(modelos.at(i+1).c_str());
 			float x = atof(modelos.at(i+2).c_str());
 			float y = atof(modelos.at(i+3).c_str());
 			float z = atof(modelos.at(i+4).c_str());
-			//printf("%f\n",timer/(temp*1000)*360);
 			glRotatef(timer/(temp*1000)*360,x,y,z);
 			i+=5;
 		}
@@ -349,10 +343,11 @@ void renderScene(void) {
 		}
 
 		else if(strcmp("patch",modelos.at(i).c_str())==0){
+			verticesTP.clear();
 			long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
 			ifstream fich;
 			fich.open(modelos.at(i+1).c_str());
-			if(preenchido2==0){
+			//if(preenchido2==0){
     		if (fich.is_open()){
 			fich >> nvertices2;
 			fich >> tess;
@@ -366,7 +361,7 @@ void renderScene(void) {
 				verticesTP.push_back(p3);
 				}
 
-		     	}
+		     	//}
 		     }
 		 fich.close();
 		 desenhaTeap(tess);
@@ -374,57 +369,32 @@ void renderScene(void) {
 	     }
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
+			vertices.clear();
 			long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
 			ifstream fich;
 			fich.open(modelos.at(i+1).c_str());
-			if(preenchido==0){
     		if (fich.is_open()){
-			fich >> nvertices;
-        		for(int k = 0; k < nvertices; k=k+3){
+    		fich >> nvertices;
+			//if(preenchido==0){
+        		for(int k = 0; k < nvertices; k++){
 				fich >> p1;
 				fich >> p2;
 				fich >> p3;
-
-				fich >> p4;
-				fich >> p5;
-				fich >> p6;
-
-				fich >> p7;
-				fich >> p8;
-				fich >> p9;
-
-				/*glBegin(GL_TRIANGLES);
-				glVertex3f(p1, p2, p3);
-				glVertex3f(p4, p5, p6);
-				glVertex3f(p7, p8, p9);
-				glEnd();*/
-
 				vertices.push_back(p1);
 				vertices.push_back(p2);
 				vertices.push_back(p3);
-				vertices.push_back(p4);
-				vertices.push_back(p5);
-				vertices.push_back(p6);
-				vertices.push_back(p7);
-				vertices.push_back(p8);
-				vertices.push_back(p9);
 				}
-				//for(int i=0;i<verticesTP.size();i++) printf("%f\n",verticesTP.at(i));
 		     	}
-		     }
-		 fich.close();
-		 desenhaModelo(tamB, nvertices);
-		 tamB += nvertices;
-		 i=i+2;
+		     fich.close();
+			 desenhaModelo(0, nvertices);
+			 tamB += nvertices;
+		 	 i=i+2;
+		     //} else printf("Erro a abrir o ficheiro.");
 	     }
     }
-    preenchido = 1;
-    preenchido2 = 1;
 
     // End of frame
     glutSwapBuffers();
-    //tempAux --;
-    //t += 0.001;
 }
 
 
