@@ -22,16 +22,13 @@ vector<float> vertV;
 vector<float> vertH;
 vector<float> vert;
 
-// falta colocar a funcao que pega nesses vertices e define as curvas (getPoints) e depois falta passar para dentro do ficheiro
-
-// criar um buffer a parte para o patches(para nao misturar), uma funcao do tipo drawCometa (ideia)
-
-// é desenhado asseguir ao Sol no xml
-
 
 float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int tess, float t, float v){
 
-	float Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz,Dx,Dy,Dz,Ex,Ey,Ez,Fx,Fy,Fz,Gx,Gy,Gz,Hx,Hy,Hz,Ix,Iy,Iz,Jx,Jy,Jz,Kx,Ky,Kz,Lx,Ly,Lz,Mx,My,Mz,Nx,Ny,Nz,Ox,Oy,Oz,Px,Py,Pz;
+	float P1x,P1y,P1z,P2x,P2y,P2z,P3x,P3y,P3z,P4x,P4y,P4z,P5x,
+	P5y,P5z,P6x,P6y,P6z,P7x,P7y,P7z,P8x,P8y,P8z,P9x,P9y,P9z,P10x,
+	P10y,P10z,P11x,P11y,P11z,P12x,P12y,P12z,P13x,P13y,P13z,P14x,
+	P14y,P14z,P15x,P15y,P15z,P16x,P16y,P16z;
 	float a,b,c,d;
 	int i,j,k;
 
@@ -39,6 +36,7 @@ float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int 
 						{ 3.0f, -6.0f,  3.0f,  0.0f},
 						{-3.0f,  3.0f,  0.0f,  0.0f},
 						{ 1.0f,  0.0f,  0.0f,  0.0f}};
+						
 	float mt[4][4] = {	{-1.0f,  3.0f, -3.0f,  1.0f},
 						{ 3.0f, -6.0f,  3.0f,  0.0f},
 						{-3.0f,  3.0f,  0.0f,  0.0f},
@@ -54,95 +52,127 @@ float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int 
 
     k = n_patch;
 
-        Ax = vertices[3*patchs[(16*k)]];         Ay = vertices[3*patchs[(16*k)]+1];     Az = vertices[3*patchs[(16*k)]+2];
-        Bx = vertices[3*patchs[(16*k+1)]];       By = vertices[3*patchs[(16*k+1)]+1];   Bz = vertices[3*patchs[(16*k)+1]+2];
-        Cx = vertices[3*patchs[(16*k+2)]];       Cy = vertices[3*patchs[(16*k+2)]+1];   Cz = vertices[3*patchs[(16*k)+2]+2];
-        Dx = vertices[3*patchs[(16*k+3)]];       Dy = vertices[3*patchs[(16*k+3)]+1];   Dz = vertices[3*patchs[(16*k)+3]+2];
-        Ex = vertices[3*patchs[(16*k+4)]];       Ey = vertices[3*patchs[(16*k+4)]+1];   Ez = vertices[3*patchs[(16*k)+4]+2];
-        Fx = vertices[3*patchs[(16*k+5)]];       Fy = vertices[3*patchs[(16*k+5)]+1];   Fz = vertices[3*patchs[(16*k)+5]+2];
-        Gx = vertices[3*patchs[(16*k+6)]];       Gy = vertices[3*patchs[(16*k+6)]+1];   Gz = vertices[3*patchs[(16*k)+6]+2];
-        Hx = vertices[3*patchs[(16*k+7)]];       Hy = vertices[3*patchs[(16*k+7)]+1];   Hz = vertices[3*patchs[(16*k)+7]+2];
-        Ix = vertices[3*patchs[(16*k+8)]];       Iy = vertices[3*patchs[(16*k+8)]+1];   Iz = vertices[3*patchs[(16*k)+8]+2];
-        Jx = vertices[3*patchs[(16*k+9)]];       Jy = vertices[3*patchs[(16*k+9)]+1];   Jz = vertices[3*patchs[(16*k)+9]+2];
-        Kx = vertices[3*patchs[(16*k+10)]];      Ky = vertices[3*patchs[(16*k+10)]+1];  Kz = vertices[3*patchs[(16*k)+10]+2];
-        Lx = vertices[3*patchs[(16*k+11)]];      Ly = vertices[3*patchs[(16*k+11)]+1];  Lz = vertices[3*patchs[(16*k)+11]+2];
-        Mx = vertices[3*patchs[(16*k+12)]];      My = vertices[3*patchs[(16*k+12)]+1];  Mz = vertices[3*patchs[(16*k)+12]+2];
-        Nx = vertices[3*patchs[(16*k+13)]];      Ny = vertices[3*patchs[(16*k+13)]+1];  Nz = vertices[3*patchs[(16*k)+13]+2];
-        Ox = vertices[3*patchs[(16*k+14)]];      Oy = vertices[3*patchs[(16*k+14)]+1];  Oz = vertices[3*patchs[(16*k)+14]+2];
-        Px = vertices[3*patchs[(16*k+15)]];      Py = vertices[3*patchs[(16*k+15)]+1];  Pz = vertices[3*patchs[(16*k)+15]+2];
+        P1x = vertices[3*patchs[(16*k)]];         
+        P1y = vertices[3*patchs[(16*k)]+1];     
+        P1z = vertices[3*patchs[(16*k)]+2];
+        P2x = vertices[3*patchs[(16*k+1)]];       
+        P2y = vertices[3*patchs[(16*k+1)]+1];  
+        P2z = vertices[3*patchs[(16*k)+1]+2];
+        P3x = vertices[3*patchs[(16*k+2)]];       
+        P3y = vertices[3*patchs[(16*k+2)]+1];   
+        P3z = vertices[3*patchs[(16*k)+2]+2];
+        P4x = vertices[3*patchs[(16*k+3)]];       
+        P4y = vertices[3*patchs[(16*k+3)]+1];   
+        P4z = vertices[3*patchs[(16*k)+3]+2];
+        P5x = vertices[3*patchs[(16*k+4)]];       
+        P5y = vertices[3*patchs[(16*k+4)]+1];   
+        P5z = vertices[3*patchs[(16*k)+4]+2];
+        P6x = vertices[3*patchs[(16*k+5)]];       
+        P6y = vertices[3*patchs[(16*k+5)]+1];   
+        P6z = vertices[3*patchs[(16*k)+5]+2];
+        P7x = vertices[3*patchs[(16*k+6)]];       
+        P7y = vertices[3*patchs[(16*k+6)]+1];   
+        P7z = vertices[3*patchs[(16*k)+6]+2];
+        P8x = vertices[3*patchs[(16*k+7)]];       
+        P8y = vertices[3*patchs[(16*k+7)]+1];   
+        P8z = vertices[3*patchs[(16*k)+7]+2];
+        P9x = vertices[3*patchs[(16*k+8)]];       
+        P9y = vertices[3*patchs[(16*k+8)]+1];   
+        P9z = vertices[3*patchs[(16*k)+8]+2];
+        P10x = vertices[3*patchs[(16*k+9)]];       
+        P10y = vertices[3*patchs[(16*k+9)]+1];   
+        P10z = vertices[3*patchs[(16*k)+9]+2];
+        P11x = vertices[3*patchs[(16*k+10)]];      
+        P11y = vertices[3*patchs[(16*k+10)]+1];  
+        P11z = vertices[3*patchs[(16*k)+10]+2];
+        P12x = vertices[3*patchs[(16*k+11)]];      
+        P12y = vertices[3*patchs[(16*k+11)]+1];  
+        P12z = vertices[3*patchs[(16*k)+11]+2];
+        P13x = vertices[3*patchs[(16*k+12)]];     
+        P13y = vertices[3*patchs[(16*k+12)]+1];  
+        P13z = vertices[3*patchs[(16*k)+12]+2];
+        P14x = vertices[3*patchs[(16*k+13)]];      
+        P14y = vertices[3*patchs[(16*k+13)]+1];  
+        P14z = vertices[3*patchs[(16*k)+13]+2];
+        P15x = vertices[3*patchs[(16*k+14)]];      
+        P15y = vertices[3*patchs[(16*k+14)]+1];  
+        P15z = vertices[3*patchs[(16*k)+14]+2];
+        P16x = vertices[3*patchs[(16*k+15)]];      
+        P16y = vertices[3*patchs[(16*k+15)]+1];  
+        P16z = vertices[3*patchs[(16*k)+15]+2];
 
 
-        ax[0]=m[0][0]*Ax+m[0][1]*Bx+m[0][2]*Cx+m[0][3]*Dx;
-		ax[1]=m[1][0]*Ax+m[1][1]*Bx+m[1][2]*Cx+m[1][3]*Dx;
-		ax[2]=m[2][0]*Ax+m[2][1]*Bx+m[2][2]*Cx+m[2][3]*Dx;
-		ax[3]=m[3][0]*Ax+m[3][1]*Bx+m[3][2]*Cx+m[3][3]*Dx;
+        ax[0]=m[0][0]*P1x+m[0][1]*P2x+m[0][2]*P3x+m[0][3]*P4x;
+		ax[1]=m[1][0]*P1x+m[1][1]*P2x+m[1][2]*P3x+m[1][3]*P4x;
+		ax[2]=m[2][0]*P1x+m[2][1]*P2x+m[2][2]*P3x+m[2][3]*P4x;
+		ax[3]=m[3][0]*P1x+m[3][1]*P2x+m[3][2]*P3x+m[3][3]*P4x;
 		
-		ay[0]=m[0][0]*Ay+m[0][1]*By+m[0][2]*Cy+m[0][3]*Dy;
-		ay[1]=m[1][0]*Ay+m[1][1]*By+m[1][2]*Cy+m[1][3]*Dy;
-		ay[2]=m[2][0]*Ay+m[2][1]*By+m[2][2]*Cy+m[2][3]*Dy;
-		ay[3]=m[3][0]*Ay+m[3][1]*By+m[3][2]*Cy+m[3][3]*Dy;
+		ay[0]=m[0][0]*P1y+m[0][1]*P2y+m[0][2]*P3y+m[0][3]*P4y;
+		ay[1]=m[1][0]*P1y+m[1][1]*P2y+m[1][2]*P3y+m[1][3]*P4y;
+		ay[2]=m[2][0]*P1y+m[2][1]*P2y+m[2][2]*P3y+m[2][3]*P4y;
+		ay[3]=m[3][0]*P1y+m[3][1]*P2y+m[3][2]*P3y+m[3][3]*P4y;
 
-		az[0]=m[0][0]*Az+m[0][1]*Bz+m[0][2]*Cz+m[0][3]*Dz;
-		az[1]=m[1][0]*Az+m[1][1]*Bz+m[1][2]*Cz+m[1][3]*Dz;
-		az[2]=m[2][0]*Az+m[2][1]*Bz+m[2][2]*Cz+m[2][3]*Dz;
-		az[3]=m[3][0]*Az+m[3][1]*Bz+m[3][2]*Cz+m[3][3]*Dz;
+		az[0]=m[0][0]*P1z+m[0][1]*P2z+m[0][2]*P3z+m[0][3]*P4z;
+		az[1]=m[1][0]*P1z+m[1][1]*P2z+m[1][2]*P3z+m[1][3]*P4z;
+		az[2]=m[2][0]*P1z+m[2][1]*P2z+m[2][2]*P3z+m[2][3]*P4z;
+		az[3]=m[3][0]*P1z+m[3][1]*P2z+m[3][2]*P3z+m[3][3]*P4z;
 
 		res[0]=pow(t,3)*ax[0]+pow(t,2)*ax[1]+t*ax[2]+ax[3];
 		res[1]=pow(t,3)*ay[0]+pow(t,2)*ay[1]+t*ay[2]+ay[3];
 		res[2]=pow(t,3)*az[0]+pow(t,2)*az[1]+t*az[2]+az[3];
 
-		ax[0]=m[0][0]*Ex+m[0][1]*Fx+m[0][2]*Gx+m[0][3]*Hx;
-		ax[1]=m[1][0]*Ex+m[1][1]*Fx+m[1][2]*Gx+m[1][3]*Hx;
-		ax[2]=m[2][0]*Ex+m[2][1]*Fx+m[2][2]*Gx+m[2][3]*Hx;
-		ax[3]=m[3][0]*Ex+m[3][1]*Fx+m[3][2]*Gx+m[3][3]*Hx;
+		ax[0]=m[0][0]*P5x+m[0][1]*P6x+m[0][2]*P7x+m[0][3]*P8x;
+		ax[1]=m[1][0]*P5x+m[1][1]*P6x+m[1][2]*P7x+m[1][3]*P8x;
+		ax[2]=m[2][0]*P5x+m[2][1]*P6x+m[2][2]*P7x+m[2][3]*P8x;
+		ax[3]=m[3][0]*P5x+m[3][1]*P6x+m[3][2]*P7x+m[3][3]*P8x;
 		
-		ay[0]=m[0][0]*Ey+m[0][1]*Fy+m[0][2]*Gy+m[0][3]*Hy;
-		ay[1]=m[1][0]*Ey+m[1][1]*Fy+m[1][2]*Gy+m[1][3]*Hy;
-		ay[2]=m[2][0]*Ey+m[2][1]*Fy+m[2][2]*Gy+m[2][3]*Hy;
-		ay[3]=m[3][0]*Ey+m[3][1]*Fy+m[3][2]*Gy+m[3][3]*Hy;
+		ay[0]=m[0][0]*P5y+m[0][1]*P6y+m[0][2]*P7y+m[0][3]*P8y;
+		ay[1]=m[1][0]*P5y+m[1][1]*P6y+m[1][2]*P7y+m[1][3]*P8y;
+		ay[2]=m[2][0]*P5y+m[2][1]*P6y+m[2][2]*P7y+m[2][3]*P8y;
+		ay[3]=m[3][0]*P5y+m[3][1]*P6y+m[3][2]*P7y+m[3][3]*P8y;
 
-		az[0]=m[0][0]*Ez+m[0][1]*Fz+m[0][2]*Gz+m[0][3]*Hz;
-		az[1]=m[1][0]*Ez+m[1][1]*Fz+m[1][2]*Gz+m[1][3]*Hz;
-		az[2]=m[2][0]*Ez+m[2][1]*Fz+m[2][2]*Gz+m[2][3]*Hz;
-		az[3]=m[3][0]*Ez+m[3][1]*Fz+m[3][2]*Gz+m[3][3]*Hz;
+		az[0]=m[0][0]*P5z+m[0][1]*P6z+m[0][2]*P7z+m[0][3]*P8z;
+		az[1]=m[1][0]*P5z+m[1][1]*P6z+m[1][2]*P7z+m[1][3]*P8z;
+		az[2]=m[2][0]*P5z+m[2][1]*P6z+m[2][2]*P7z+m[2][3]*P8z;
+		az[3]=m[3][0]*P5z+m[3][1]*P6z+m[3][2]*P7z+m[3][3]*P8z;
 
 		res1[0]=pow(t,3)*ax[0]+pow(t,2)*ax[1]+t*ax[2]+ax[3];
 		res1[1]=pow(t,3)*ay[0]+pow(t,2)*ay[1]+t*ay[2]+ay[3];
 		res1[2]=pow(t,3)*az[0]+pow(t,2)*az[1]+t*az[2]+az[3];
 
-		ax[0]=m[0][0]*Ix+m[0][1]*Jx+m[0][2]*Kx+m[0][3]*Lx;
-		ax[1]=m[1][0]*Ix+m[1][1]*Jx+m[1][2]*Kx+m[1][3]*Lx;
-		ax[2]=m[2][0]*Ix+m[2][1]*Jx+m[2][2]*Kx+m[2][3]*Lx;
-		ax[3]=m[3][0]*Ix+m[3][1]*Jx+m[3][2]*Kx+m[3][3]*Lx;
+		ax[0]=m[0][0]*P9x+m[0][1]*P10x+m[0][2]*P11x+m[0][3]*P12x;
+		ax[1]=m[1][0]*P9x+m[1][1]*P10x+m[1][2]*P11x+m[1][3]*P12x;
+		ax[2]=m[2][0]*P9x+m[2][1]*P10x+m[2][2]*P11x+m[2][3]*P12x;
+		ax[3]=m[3][0]*P9x+m[3][1]*P10x+m[3][2]*P11x+m[3][3]*P12x;
 		
-		ay[0]=m[0][0]*Iy+m[0][1]*Jy+m[0][2]*Ky+m[0][3]*Ly;
-		ay[1]=m[1][0]*Iy+m[1][1]*Jy+m[1][2]*Ky+m[1][3]*Ly;
-		ay[2]=m[2][0]*Iy+m[2][1]*Jy+m[2][2]*Ky+m[2][3]*Ly;
-		ay[3]=m[3][0]*Iy+m[3][1]*Jy+m[3][2]*Ky+m[3][3]*Ly;
+		ay[0]=m[0][0]*P9y+m[0][1]*P10y+m[0][2]*P11y+m[0][3]*P12y;
+		ay[1]=m[1][0]*P9y+m[1][1]*P10y+m[1][2]*P11y+m[1][3]*P12y;
+		ay[2]=m[2][0]*P9y+m[2][1]*P10y+m[2][2]*P11y+m[2][3]*P12y;
+		ay[3]=m[3][0]*P9y+m[3][1]*P10y+m[3][2]*P11y+m[3][3]*P12y;
 
-		az[0]=m[0][0]*Iz+m[0][1]*Jz+m[0][2]*Kz+m[0][3]*Lz;
-		az[1]=m[1][0]*Iz+m[1][1]*Jz+m[1][2]*Kz+m[1][3]*Lz;
-		az[2]=m[2][0]*Iz+m[2][1]*Jz+m[2][2]*Kz+m[2][3]*Lz;
-		az[3]=m[3][0]*Iz+m[3][1]*Jz+m[3][2]*Kz+m[3][3]*Lz;
+		az[0]=m[0][0]*P9z+m[0][1]*P10z+m[0][2]*P11z+m[0][3]*P12z;
+		az[1]=m[1][0]*P9z+m[1][1]*P10z+m[1][2]*P11z+m[1][3]*P12z;
+		az[2]=m[2][0]*P9z+m[2][1]*P10z+m[2][2]*P11z+m[2][3]*P12z;
+		az[3]=m[3][0]*P9z+m[3][1]*P10z+m[3][2]*P11z+m[3][3]*P12z;
 
 		res2[0]=pow(t,3)*ax[0]+pow(t,2)*ax[1]+t*ax[2]+ax[3];
 		res2[1]=pow(t,3)*ay[0]+pow(t,2)*ay[1]+t*ay[2]+ay[3];
 		res2[2]=pow(t,3)*az[0]+pow(t,2)*az[1]+t*az[2]+az[3];
 
-		ax[0]=m[0][0]*Mx+m[0][1]*Nx+m[0][2]*Ox+m[0][3]*Px;
-		ax[1]=m[1][0]*Mx+m[1][1]*Nx+m[1][2]*Ox+m[1][3]*Px;
-		ax[2]=m[2][0]*Mx+m[2][1]*Nx+m[2][2]*Ox+m[2][3]*Px;
-		ax[3]=m[3][0]*Mx+m[3][1]*Nx+m[3][2]*Ox+m[3][3]*Px;
+		ax[0]=m[0][0]*P13x+m[0][1]*P14x+m[0][2]*P15x+m[0][3]*P16x;
+		ax[1]=m[1][0]*P13x+m[1][1]*P14x+m[1][2]*P15x+m[1][3]*P16x;
+		ax[2]=m[2][0]*P13x+m[2][1]*P14x+m[2][2]*P15x+m[2][3]*P16x;
+		ax[3]=m[3][0]*P13x+m[3][1]*P14x+m[3][2]*P15x+m[3][3]*P16x;
 		
-		ay[0]=m[0][0]*My+m[0][1]*Ny+m[0][2]*Oy+m[0][3]*Py;
-		ay[1]=m[1][0]*My+m[1][1]*Ny+m[1][2]*Oy+m[1][3]*Py;
-		ay[2]=m[2][0]*My+m[2][1]*Ny+m[2][2]*Oy+m[2][3]*Py;
-		ay[3]=m[3][0]*My+m[3][1]*Ny+m[3][2]*Oy+m[3][3]*Py;
+		ay[0]=m[0][0]*P13y+m[0][1]*P14y+m[0][2]*P15y+m[0][3]*P16y;
+		ay[1]=m[1][0]*P13y+m[1][1]*P14y+m[1][2]*P15y+m[1][3]*P16y;
+		ay[2]=m[2][0]*P13y+m[2][1]*P14y+m[2][2]*P15y+m[2][3]*P16y;
+		ay[3]=m[3][0]*P13y+m[3][1]*P14y+m[3][2]*P15y+m[3][3]*P16y;
 
-		az[0]=m[0][0]*Mz+m[0][1]*Nz+m[0][2]*Oz+m[0][3]*Pz;
-		az[1]=m[1][0]*Mz+m[1][1]*Nz+m[1][2]*Oz+m[1][3]*Pz;
-		az[2]=m[2][0]*Mz+m[2][1]*Nz+m[2][2]*Oz+m[2][3]*Pz;
-		az[3]=m[3][0]*Mz+m[3][1]*Nz+m[3][2]*Oz+m[3][3]*Pz;
+		az[0]=m[0][0]*P13z+m[0][1]*P14z+m[0][2]*P15z+m[0][3]*P16z;
+		az[1]=m[1][0]*P13z+m[1][1]*P14z+m[1][2]*P15z+m[1][3]*P16z;
+		az[2]=m[2][0]*P13z+m[2][1]*P14z+m[2][2]*P15z+m[2][3]*P16z;
+		az[3]=m[3][0]*P13z+m[3][1]*P14z+m[3][2]*P15z+m[3][3]*P16z;
 
 		res3[0]=pow(t,3)*ax[0]+pow(t,2)*ax[1]+t*ax[2]+ax[3];
 		res3[1]=pow(t,3)*ay[0]+pow(t,2)*ay[1]+t*ay[2]+ay[3];
@@ -172,54 +202,74 @@ float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int 
 
 
 
-void patchR(FILE *f_patch, FILE *f, int tess){ // guarda o numero de patches, os vertices correspondentes das patches (patch)
-	// e as coordenadas dos vertices de controlo(vertices), já funciona 
+void patchR(FILE *f_patch, FILE *f, int tess){
 
-	// f é o ficheiro destinho
-
-	//mudar as variaveis e (se houver tempo) mudar a funcao em sí
-
-	int i=0,j=0,v=0,avanco,k,n_patch,n_vertices, *patchs=NULL;
-	float *vertices=NULL,*points=NULL,x,y,z;
+	int cont=0;
+	int k,n_patch,n_vertices;
+	int *patchs=NULL;
+	float *vertices=NULL,*points=NULL;
+	float x,y,z;
 
 	fscanf(f_patch,"%d\n",&n_patch);
 	patchs=(int*)malloc(16*n_patch*sizeof(int));
     
-	while(i<n_patch){
-		for(j=0;j<15;j++){
+    for(int i=0;i<n_patch;i++){
+		for(int j=0;j<15;j++){
 			fscanf(f_patch,"%d, ",&k);
-			patchs[v++]=k;
+			patchs[cont++]=k;
 		}
 		fscanf(f_patch,"%d\n",&k);
-		patchs[v++]=k;
-		i++;
+		patchs[cont++]=k;
 	}
     
 	fscanf(f_patch,"%d\n",&n_vertices);
 	vertices=(float*)malloc(3*n_vertices*sizeof(float));
-	v=0;
+	cont=0;
 	while(fscanf(f_patch," %f, %f, %f\n",&x,&y,&z)!=EOF){
-		vertices[v++]=x;
-		vertices[v++]=y;
-		vertices[v++]=z;
+		vertices[cont++]=x;
+		vertices[cont++]=y;
+		vertices[cont++]=z;
 	}
 
 	for(int co = 0;co<n_patch;co++){
-	for(int i=0; i<=tess; i++){
-	for(int j=0; j<=tess; j++){
+	for(int i=0; i<tess; i++){
+	for(int j=0; j<tess; j++){
 		getPoints(patchs,co,vertices,n_vertices,tess,i*1.0/tess, j*1.0/tess);
 		vertV.push_back(res4[0]);
 		vertV.push_back(res4[1]);
 		vertV.push_back(res4[2]);
-		nvPatch ++;
-	}
+		nvPatch++;
 
-	for(int j=0; j<=tess; j++){
-		getPoints(patchs,co,vertices,n_vertices,tess,j*1.0/tess, i*1.0/tess);
-		vertH.push_back(res4[0]);
-		vertH.push_back(res4[1]);
-		vertH.push_back(res4[2]);
-		nvPatch ++;
+		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, j*1.0/tess);
+		vertV.push_back(res4[0]);
+		vertV.push_back(res4[1]);
+		vertV.push_back(res4[2]);
+		nvPatch++;
+
+		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
+		vertV.push_back(res4[0]);
+		vertV.push_back(res4[1]);
+		vertV.push_back(res4[2]);
+		nvPatch++;
+
+		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
+		vertV.push_back(res4[0]);
+		vertV.push_back(res4[1]);
+		vertV.push_back(res4[2]);
+		nvPatch++;
+
+		getPoints(patchs,co,vertices,n_vertices,tess,i*1.0/tess, (j+1)*1.0/tess);
+		vertV.push_back(res4[0]);
+		vertV.push_back(res4[1]);
+		vertV.push_back(res4[2]);
+		nvPatch++;
+
+		getPoints(patchs,co,vertices,n_vertices,tess,i*1.0/tess, j*1.0/tess);
+		vertV.push_back(res4[0]);
+		vertV.push_back(res4[1]);
+		vertV.push_back(res4[2]);
+		nvPatch++;
+
 	}
 	}
 	}
