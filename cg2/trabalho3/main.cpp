@@ -28,34 +28,16 @@ using namespace std;
 #define POINT_COUNT 5
 float alfa = M_PI/2, beta = M_PI/6, raio = 200.0;
 vector< std::vector<long double> > vert;
-int i = 0;
-float x;
 float y[3]={0,-1,0};
 vector<std::string> modelos;
 vector<float> pontosT;
-int nvertices;
-int nvertices2;
-int tess;
-int inicioVertices = 0;
-float timer;
+int nvertices, nvertices2, tess, cont, contSoma;
+float timer, ang, tempo = 1.0, temp = 0.0;
 
-float temp = 0.0;
-float tempAux = 0.0;
+vector<GLfloat> vertices, verticesTP;
 
-vector<GLfloat> vertices;
-vector<GLfloat> verticesTP;
+GLuint buffer, buffer2;
 
-GLuint buffer;
-
-GLuint buffer2;
-
-int cont = 0;
-int contSoma = 0;
-float tempo = 1.0;
-
-float pointx = 0.0;
-float pointy = 0.0;
-float pointz = 0.0;
 
 void normalize(float *a) { 
 	float l = sqrt(a[0]*a[0] + a[1] * a[1] + a[2] * a[2]); 
@@ -102,7 +84,6 @@ void getCatmullRomPoint(float t, int *indices, float *res,float *deriv) {
 	float ax[4];
 	float ay[4];
 	float az[4];
-	
 
 	ax[0]=m[0][0]*pontosT[indices[0]*3+0]+m[0][1]*pontosT[indices[1]*3+0]+m[0][2]*pontosT[indices[2]*3+0]+m[0][3]*pontosT[indices[3]*3+0];
 	ax[1]=m[1][0]*pontosT[indices[0]*3+0]+m[1][1]*pontosT[indices[1]*3+0]+m[1][2]*pontosT[indices[2]*3+0]+m[1][3]*pontosT[indices[3]*3+0];
@@ -117,10 +98,9 @@ void getCatmullRomPoint(float t, int *indices, float *res,float *deriv) {
 	az[0]=m[0][0]*pontosT[indices[0]*3+2]+m[0][1]*pontosT[indices[1]*3+2]+m[0][2]*pontosT[indices[2]*3+2]+m[0][3]*pontosT[indices[3]*3+2];
 	az[1]=m[1][0]*pontosT[indices[0]*3+2]+m[1][1]*pontosT[indices[1]*3+2]+m[1][2]*pontosT[indices[2]*3+2]+m[1][3]*pontosT[indices[3]*3+2];
 	az[2]=m[2][0]*pontosT[indices[0]*3+2]+m[2][1]*pontosT[indices[1]*3+2]+m[2][2]*pontosT[indices[2]*3+2]+m[2][3]*pontosT[indices[3]*3+2];
-	az[3]=m[3][0]*pontosT[indices[0]*3+2]+m[3][1]*pontosT[indices[1]*3+2]+m[3][2]*pontosT[indices[2]*3+2]+m[3][3]*pontosT[indices[3]*3+2];
-	
+	az[3]=m[3][0]*pontosT[indices[0]*3+2]+m[3][1]*pontosT[indices[1]*3+2]+m[3][2]*pontosT[indices[2]*3+2]+m[3][3]*pontosT[indices[3]*3+2];	
 
-	// resultado final do produto de matrizes do pdf
+	// resultado final do produto de matrizes
 	res[0]=pow(t,3)*ax[0]+pow(t,2)*ax[1]+t*ax[2]+ax[3];
 	res[1]=pow(t,3)*ay[0]+pow(t,2)*ay[1]+t*ay[2]+ay[3];
 	res[2]=pow(t,3)*az[0]+pow(t,2)*az[1]+t*az[2]+az[3];
@@ -128,10 +108,6 @@ void getCatmullRomPoint(float t, int *indices, float *res,float *deriv) {
 	deriv[0]=3*pow(t,2)*ax[0]+2*t*ax[1]+ax[2];
 	deriv[1]=3*pow(t,2)*ay[0]+2*t*ay[1]+ay[2];
 	deriv[2]=3*pow(t,2)*az[0]+2*t*az[1]+az[2];
-
-	// Compute point res = T * M * P
-	// where Pi = p[indices[i]]
-	// ...
 }
 
 void getGlobalCatmullRomPoint(float gt, float *res, float *deriv) {
@@ -151,7 +127,6 @@ void getGlobalCatmullRomPoint(float gt, float *res, float *deriv) {
 }
 
 void renderCatmullRomCurve() {
-
 // desenhar a curva usando segmentos de reta - GL_LINE_LOOP
 	float res[3];
 	float deriv[3];
@@ -161,13 +136,8 @@ void renderCatmullRomCurve() {
 	for(int i=0; i<100; i++){
 		getGlobalCatmullRomPoint(i/100.0,res,deriv);
 		glVertex3f(res[0],res[1],res[2]);
-
-
 	}
-	
 	glEnd();
-	
-
 }
 
 void changeSize(int w, int h) {
@@ -197,8 +167,8 @@ void changeSize(int w, int h) {
 
 void processKeys(unsigned char c, int xx, int yy) {
   switch (c){
-  case 'q': raio=raio+1.0; break;
-  case 'e': raio=raio-1.0; break;
+  case 'q': raio=raio+10.0; break;
+  case 'e': raio=raio-10.0; break;
   case 'w': if((beta+0.1<=M_PI/2) && (beta+0.1>=-M_PI/2)) beta+=0.1; break;
   case 's': if((beta-0.1<=M_PI/2) && (beta-0.1>=-M_PI/2)) beta-=0.1; break;
   case 'm': alfa+=0.1; break;
@@ -208,35 +178,27 @@ void processKeys(unsigned char c, int xx, int yy) {
   glutPostRedisplay();
 }
 
-// tamM é o indice inicial para desenhar e tamMax é o numero de indices do buffer que vai usar para desenhar
-// pelo que parece também dá se usar de 0 a vertices.size()
-void desenhaModelo(int tamM, int tamMax){
+void desenhaModelo(){
 
 	glGenBuffers(1,&buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
 	glVertexPointer(3,GL_FLOAT,0,0);
-	glDrawArrays(GL_TRIANGLES, tamM, tamMax);
-	//glDrawArrays(GL_TRIANGLES, 0, vertices.size());	//ta a desenhar como o anterior
-
-
+    glEnableClientState(GL_VERTEX_ARRAY);
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
 
 }
 
-void desenhaTeap(int tess){
+void desenhaTeap(){
 
 	glGenBuffers(1,&buffer2);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer2);
 	glBufferData(GL_ARRAY_BUFFER, verticesTP.size() * sizeof(float), &verticesTP[0], GL_STATIC_DRAW);
 
 	glVertexPointer(3,GL_FLOAT,0,0);
-	for(int i=0;i<verticesTP.size();i+=tess+1){
-			glDrawArrays(GL_LINE_STRIP,i,tess+1);
-	}
-
-	//for(int i=0;i<verticesTP.size();i++) printf("%f\n",verticesTP.at(i));
-
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDrawArrays(GL_TRIANGLES, 0, verticesTP.size()/3);
 
 }
 
@@ -250,14 +212,8 @@ void renderScene(void) {
 	float m[16]; 
 	float z[3];
 
-	int tamB = 0;
-
 	contSoma = 0;
 	cont = 0;
-
-
-
-    glEnableClientState(GL_VERTEX_ARRAY);
 
     // clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -299,7 +255,6 @@ void renderScene(void) {
 
 		else if(strcmp("rotate",modelos.at(i).c_str())==0){
 			timer = glutGet(GLUT_ELAPSED_TIME);
-			float ang;
 			temp = atof(modelos.at(i+1).c_str());
 			float x = atof(modelos.at(i+2).c_str());
 			float y = atof(modelos.at(i+3).c_str());
@@ -344,10 +299,9 @@ void renderScene(void) {
 
 		else if(strcmp("patch",modelos.at(i).c_str())==0){
 			verticesTP.clear();
-			long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
+			long double p1,p2,p3;
 			ifstream fich;
 			fich.open(modelos.at(i+1).c_str());
-			//if(preenchido2==0){
     		if (fich.is_open()){
 			fich >> nvertices2;
 			fich >> tess;
@@ -360,11 +314,9 @@ void renderScene(void) {
 				verticesTP.push_back(p2);
 				verticesTP.push_back(p3);
 				}
-
-		     	//}
 		     }
 		 fich.close();
-		 desenhaTeap(tess);
+		 desenhaTeap();
 		 i=i+2;
 	     }
 
@@ -375,7 +327,6 @@ void renderScene(void) {
 			fich.open(modelos.at(i+1).c_str());
     		if (fich.is_open()){
     		fich >> nvertices;
-			//if(preenchido==0){
         		for(int k = 0; k < nvertices; k++){
 				fich >> p1;
 				fich >> p2;
@@ -386,10 +337,8 @@ void renderScene(void) {
 				}
 		     	}
 		     fich.close();
-			 desenhaModelo(0, nvertices);
-			 tamB += nvertices;
+			 desenhaModelo();
 		 	 i=i+2;
-		     //} else printf("Erro a abrir o ficheiro.");
 	     }
     }
 
@@ -527,8 +476,6 @@ int main(int argc, char* argv[]) {
 
 	}
 	else printf("Failed to load file\n");
-
-	//for(int i=0;i<modelos.size();i++) cout << modelos.at(i) << "\n";
     
     // init GLUT and the window
     glutInit(&argc, argv);
