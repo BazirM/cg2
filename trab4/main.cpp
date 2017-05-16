@@ -10,6 +10,11 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <IL/il.h>
+
+//ver agora a questão da textura e normais no teapot, textura no plano, cone, ...
+//qestao se a luz dá bem ou nao, etc
+//preencher o xml
 
 using namespace std;
 #define POINT_COUNT 5
@@ -19,15 +24,20 @@ float y[3]={0,-1,0};
 vector<std::string> modelos;
 vector<float> pontosT;
 vector<float> pontosLuz;
-int nvertices, nvertices2, tess, cont, contSoma, nverticesN;
+int nvertices, nvertices2, tess, cont, contSoma, nverticesN, nverticesT;
 float timer, ang, tempo = 1.0, temp = 0.0;
+
+int nv = 0;
+int nvp = 0;
 
 vector<GLfloat> norm;
 vector<GLfloat> normP;
+vector<GLfloat> normT;
 
 vector<GLfloat> vertices, verticesTP;
 
-GLuint buffer, buffer2, buffer3, buffer4;
+GLuint buffer, buffer2, buffer3, buffer4, buffer5;
+GLuint texID;
 
 
 void normalize(float *a) { 
@@ -169,18 +179,6 @@ void processKeys(unsigned char c, int xx, int yy) {
   glutPostRedisplay();
 }
 
-/*void desenhaModelo(){
-
-	glGenBuffers(1,&buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-
-	glVertexPointer(3,GL_FLOAT,0,0);
-    glEnableClientState(GL_VERTEX_ARRAY);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
-
-}*/
-
 void desenhaModelo(int v, int mv){
 
 	//GLfloat amb[4] = {0.2, 0.2, 0.2, 1.0};
@@ -188,9 +186,9 @@ void desenhaModelo(int v, int mv){
 	//GLfloat pos[4] = {0.0, 0.0 ,1.0, 0.0};
 
 	/*float pos[4] = {1.0, 1.0, 1.0, 0.0};
-	float grena[4] = {153.0/255.0, 0.0, 51.0/255.0, 1.0};
+	float grena[4] = {153.0/255.0, 0.0, 51.0/255.0, 1.0};*/
 
-	GLfloat amb[4] = {0.2, 0.2, 0.2, 1.0};
+	/*GLfloat amb[4] = {0.2, 0.2, 0.2, 1.0};
 	GLfloat diff[4] = {1.0, 1.0, 1.0, 1.0};
 	float red[4] = {0.8f, 0.2f, 0.2f, 1.0f};
 
@@ -198,19 +196,22 @@ void desenhaModelo(int v, int mv){
 	glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);*/
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
 
-	//float purple[4] = { 1.0f,0.0f,1.0f, 1.0f };
-	//glMaterialfv(GL_FRONT, GL_DIFFUSE, purple);
+	float purple[4] = { 1.0f,0.0f,1.0f, 1.0f };
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, purple);*/
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glVertexPointer(3,GL_FLOAT,0,0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer4);
-	glNormalPointer(GL_FLOAT, 0, 0);	
+	glNormalPointer(GL_FLOAT, 0, 0);
 
-	glDrawArrays(GL_TRIANGLES, mv, (mv + v));
+	glBindBuffer(GL_ARRAY_BUFFER,buffer5);
+	glTexCoordPointer(2,GL_FLOAT,0,0);
+(
+	glDrawArrays(GL_TRIANGLES, mv, (mv + v)));
 
 }
 
@@ -238,8 +239,8 @@ void desenhaTeap(int v, int mv){
 	glBindBuffer(GL_ARRAY_BUFFER, buffer2);
 	glVertexPointer(3,GL_FLOAT,0,0);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, buffer3);
-	//glNormalPointer(GL_FLOAT, 0, 0);	
+	glBindBuffer(GL_ARRAY_BUFFER, buffer3);
+	glNormalPointer(GL_FLOAT, 0, 0);	
 
 
 	/*glBindBuffer(GL_ARRAY_BUFFER, buffer4);
@@ -251,7 +252,7 @@ void desenhaTeap(int v, int mv){
 
 /*void desenhaTeap(){
 
-	/*glGenBuffers(1,&buffer2);
+	glGenBuffers(1,&buffer2);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer2);
 	glBufferData(GL_ARRAY_BUFFER, verticesTP.size() * sizeof(float), &verticesTP[0], GL_STATIC_DRAW);
 
@@ -293,6 +294,15 @@ void prepareNormals(){
 
 }
 
+void prepareTexturas(){
+
+	glGenBuffers(1, &buffer5);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer5);
+	glBufferData(GL_ARRAY_BUFFER, normT.size() * sizeof(float), &normT[0], GL_STATIC_DRAW);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
+}
+
 
 
 void renderScene(void) {
@@ -304,11 +314,11 @@ void renderScene(void) {
 	float z[3];
 	float pos[4] = {0.0, 0.0, 0.0, 1.0};
 
-	int nv = 0;
-	int nvp = 0;
-
 	contSoma = 0;
 	cont = 0;
+
+	nv = 0;
+	nvp = 0;
 
 
     // clear buffers
@@ -324,13 +334,15 @@ void renderScene(void) {
     float lpo[4] = { 0.2,0.2,0.2,1.0 };
     float lp[4] = { 1.0,1.0,1.0,1.0 };
 
-    /*glLightfv(GL_LIGHT0, GL_POSITION, lpos);
+    glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lpo);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lp);//apenase um exemplo*/
 
     for(int i=0;i<modelos.size();){
 		if(strcmp("group",modelos.at(i).c_str())==0){
 			glPushMatrix();
+			glDisable(GL_TEXTURE_2D);
+			//glClear(GL_COLOR_BUFFER_BIT);
 			i++;
 		}
 		
@@ -404,6 +416,14 @@ void renderScene(void) {
         	i+=2;
         }
 
+        else if(strcmp("texture",modelos.at(i).c_str())==0){
+        	glEnable(GL_TEXTURE_2D);	// com o disable depois do group para nao misturar texturas
+        	int idTextura = atoi(modelos.at(i+1).c_str());
+        	glBindTexture(GL_TEXTURE_2D, idTextura);
+        	i+=2;
+        }
+
+
 		else if(strcmp("color",modelos.at(i).c_str())==0){
             	float dr = atof(modelos.at(i+1).c_str());
            		float dg = atof(modelos.at(i+2).c_str());
@@ -436,15 +456,19 @@ void renderScene(void) {
 	     }
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
-			desenhaModelo(atoi(modelos.at(i+1).c_str()), nv);
-			nv += atoi(modelos.at(i+1).c_str());
-		 	 i=i+2;
+			int numVert = atoi(modelos.at(i+1).c_str());
+			desenhaModelo(numVert, nv);
+			nv += numVert;
+		 	i=i+2;
 	     }
     }
 
     // End of frame
     glutSwapBuffers();
 }
+
+
+
 
 void calcularNormalTriangulo(float *a, float *b, float *c, float *res){
 	float U[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2]};
@@ -456,6 +480,42 @@ void calcularNormalTriangulo(float *a, float *b, float *c, float *res){
 	//res[1] = U[2]*V[0] - U[0]*V[2];
 	//res[2] = U[0]*V[1] - U[1]*V[0];
 
+
+}
+
+
+int loadTexture(std::string s) {
+
+	unsigned int t,tw,th;
+	unsigned char *texData;
+	unsigned int texID;
+
+	ilInit();
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+	ilGenImages(1,&t);
+	ilBindImage(t);
+	ilLoadImage((ILstring)s.c_str());
+	tw = ilGetInteger(IL_IMAGE_WIDTH);
+	th = ilGetInteger(IL_IMAGE_HEIGHT);
+	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+	texData = ilGetData();
+
+	glGenTextures(1,&texID);
+	
+	glBindTexture(GL_TEXTURE_2D,texID);
+	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_WRAP_S,		GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_WRAP_T,		GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_MAG_FILTER,   	GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,	GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return texID;
 
 }
 
@@ -503,6 +563,14 @@ void lerXML(TiXmlElement* e){
 				char buff[15];
 				if(e==NULL) printf("Erro no models.\n");
 				TiXmlElement* m = e->FirstChildElement("model");
+				pAttrib = m->Attribute("texture");
+				if(pAttrib){
+					unsigned int texId = loadTexture(pAttrib);
+					sprintf(buff, "%d", texId);
+					modelos.push_back("texture");
+					modelos.push_back(buff);
+					//puxar o "texture" e o valor do texId
+				}
 				while(m){
 					modelos.push_back("color");
 					for(int i=1;i<13;i++){
@@ -538,6 +606,16 @@ void lerXML(TiXmlElement* e){
 						normP.push_back(p1);
 						normP.push_back(p2);
 						normP.push_back(p3);
+					}
+					fich >> nverticesT;
+					printf("%d\n",nverticesT);
+        			for(int k = 0; k < nverticesT; k++){
+        				fich >> p1;
+						fich >> p2;
+						//fich >> p3;
+						normT.push_back(p1);
+						normT.push_back(p2);
+						//normT.push_back(p3);
 					}
 		     		}
 		    	 	fich.close();
@@ -688,25 +766,15 @@ void lerXML(TiXmlElement* e){
 
 }
 
+
 	
 
 
 int main(int argc, char* argv[]) {
 
-	TiXmlDocument doc(argv[1]);
-	bool loadOkay = doc.LoadFile();
-	if (loadOkay)
-	{
-		TiXmlElement* titleElement = doc.FirstChildElement( "scene" )->FirstChildElement( "group" );
-		TiXmlElement* e = titleElement->FirstChildElement();
-		lerXML(e);
 
-	}
-	else printf("Failed to load file\n");
-
-
-	//for(int i=0;i<normP.size();i++) printf("%f\n",normP.at(i));
-	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
+	//for(int i=0;i<normT.size();i++) printf("%f\n",normT.at(i));
+	//for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
     
     // init GLUT and the window
     glutInit(&argc, argv);
@@ -735,13 +803,31 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    TiXmlDocument doc(argv[1]);
+	bool loadOkay = doc.LoadFile();
+	if (loadOkay)
+	{
+		TiXmlElement* titleElement = doc.FirstChildElement( "scene" )->FirstChildElement( "group" );
+		TiXmlElement* e = titleElement->FirstChildElement();
+		lerXML(e);
+
+	}
+	else printf("Failed to load file\n");
+
 	prepareModels();
 
 	prepareNormals();
 
+	prepareTexturas();
+
+	//glEnable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
+
+	//for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
+	//for(int i=0;i<normT.size();i+=2) printf("%f %f\n",normT.at(i), normT.at(i+1));
+	printf("%li\n",normT.size());
 
     // enter GLUT's main cycle
     glutMainLoop();

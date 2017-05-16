@@ -23,6 +23,7 @@ vector<float> vertH;
 vector<float> vert;
 
 vector<float> normalV;
+vector<float> textV;
 
 
 float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int tess, float t, float v){
@@ -402,16 +403,51 @@ int main(int argc, char* argv[]) {
 
             outputFile << xs1 << " " << ys1 << " " << 0 << "\n" << x1 << " " << ys1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n";
             outputFile << x1 << " " << ys1 << " " << 0 << "\n" << x1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n";
+
             outputFile << x1 << " " << ys1 << " " << 0 << "\n" << x1 << " " << ys1 << " " << -z << "\n" << x1 << " " << y1 << " " << 0 << "\n";
             outputFile << x1 << " " << ys1 << " " << -z << "\n" << x1 << " " << y1 << " " << -z << "\n" << x1 << " " << y1 << " " << 0 << "\n";
+
             outputFile << xs1 << " " << ys1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << ys1 << " " << -z << "\n";
             outputFile << xs1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << -z << "\n" << xs1 << " " << ys1 << " " << -z << "\n";
+
             outputFile << x1 << " " << ys1 << " " << -z << "\n" << xs1 << " " << ys1 << " " << -z << "\n" << xs1 << " " << y1 << " " << -z << "\n";
             outputFile << x1 << " " << ys1 << " " << -z << "\n" << xs1 << " " << y1 << " " << -z << "\n" << x1 << " " << y1 << " " << -z << "\n";
+
             outputFile << xs1 << " " << y1 << " " << -z << "\n" << xs1 << " " << y1 << " " << 0 << "\n" << x1 << " " << y1 << " " << 0 << "\n";
             outputFile << xs1 << " " << y1 << " " << -z << "\n" << x1 << " " << y1 << " " << 0 << "\n" << x1 << " " << y1 << " " << -z << "\n";
+
             outputFile << xs1 << " " << ys1 << " " << 0 << "\n" << xs1 << " " << ys1 << " " << -z << "\n" << x1 << " " << ys1 << " " << 0 << "\n";
             outputFile << xs1 << " " << ys1 << " " << -z << "\n" << x1 << " " << ys1 << " " << -z << "\n" << x1 << " " << ys1 << " " << 0 << "\n";
+            }
+        }
+
+        outputFile << 36*(divisoes+1)*(divisoes+1) << "\n";
+
+        for(int i = divisoes+1;i>0;i--){
+            for(int j=divisoes+1;j>0;j--) {
+				//lado
+				outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
+				outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
+
+				//lado
+				outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
+				outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
+
+				//lado
+				outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
+				outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
+
+				//atras
+				outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
+				outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
+
+				//topo
+				outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
+				outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
+
+				//base
+				outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
+				outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";	
             }
         }
         printf("Done\n");
@@ -425,7 +461,7 @@ int main(int argc, char* argv[]) {
 	float slices = atoi(argv[3]);
 	float radius = atoi(argv[2]);
 	
-	outputFile << stacks*slices*6 << "\n";
+	outputFile << stacks*slices*6 << "\n";	//6 porque e 6 vertices por cada 2 triangulos
 
 	for(int j=0;j<stacks;j++){
         	for(int i=0;i<slices;i++){
@@ -441,6 +477,12 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
 			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
 
+			textV.push_back(i*1.0/slices);
+			textV.push_back(j*1.0/stacks);
+
+			//textV.push_back((atan2((cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j)),sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j))/(2*M_PI)) + 0.5);
+			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*j))/M_PI) - .5);	
+
 			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << " ";
 			outputFile << radius * sin((M_PI/2)-(M_PI/stacks)*j);
@@ -452,6 +494,12 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
 			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j));
 
+			textV.push_back((i+1)*1.0/slices);
+			textV.push_back(j*1.0/stacks);
+
+			//textV.push_back((atan2((cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j)),sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j))/(2*M_PI)) + 0.5);
+			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*j))/M_PI) - .5);
+
 			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << " ";
 			outputFile << radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
@@ -463,7 +511,30 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
 			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
 
+			textV.push_back((i+1)*1.0/slices);
+			textV.push_back((j+1)*1.0/stacks);
+
+			//textV.push_back((atan2((cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1))),sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)))/(2*M_PI)) + 0.5);
+			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*(j+1)))/M_PI) - .5);
+
 			//segundo triangulo
+			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			outputFile << " ";
+			outputFile << radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
+			outputFile << " ";
+			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			outputFile << "\n";
+
+			normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
+			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+
+			textV.push_back((i+1)*1.0/slices);
+			textV.push_back((j+1)*1.0/stacks);
+
+			//textV.push_back((atan2((cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1))),sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)))/(2*M_PI)) + 0.5);
+			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*(j+1)))/M_PI) - .5);
+
 			outputFile << radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << " ";
 			outputFile << radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
@@ -473,7 +544,13 @@ int main(int argc, char* argv[]) {
 
 			normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
 			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));	
+
+			textV.push_back(i*1.0/slices);
+			textV.push_back((j+1)*1.0/stacks);
+
+			//textV.push_back((atan2((cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1))),sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)))/(2*M_PI)) + 0.5);
+			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*(j+1)))/M_PI) - .5);
 
 			outputFile << radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << " ";
@@ -484,25 +561,22 @@ int main(int argc, char* argv[]) {
 
 			normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
 			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));			
+			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
 
-			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
-			outputFile << " ";
-			outputFile << radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
-			outputFile << " ";
-			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
-			outputFile << "\n";
+			textV.push_back(i*1.0/slices);
+			textV.push_back(j*1.0/stacks);
 
-			normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//textV.push_back((atan2((cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j)),sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j))/(2*M_PI)) + 0.5);
+			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*j))/M_PI) - .5);
 
 		}
 	}
 
 	outputFile << stacks*slices*6 << "\n";
 	for(int i=0;i<normalV.size();i+=3) outputFile << normalV.at(i) << " " << normalV.at(i+1) << " " << normalV.at(i+2) << "\n";
-	
+
+	outputFile << stacks*slices*6 << "\n";
+	for(int i=0;i<textV.size();i+=2) outputFile << textV.at(i) << " " << textV.at(i+1) <<  "\n";	
 
 	outputFile.close();		
     	printf("Done\n");
@@ -616,6 +690,8 @@ int main(int argc, char* argv[]) {
 	outputFile << stacks*slices*6 + 3*slices << "\n";
 	for(int i=0;i<normalV.size();i+=3) outputFile << normalV.at(i) << " " << normalV.at(i+1) << " " << normalV.at(i+2) << "\n";
 	
+	//textura
+
 	outputFile.close();		
     	printf("Done\n");
 
@@ -631,6 +707,11 @@ int main(int argc, char* argv[]) {
             
             outputFile << x/2 << " " << 0 << " " << z/2 << "\n" << x/2 << " " << 0 << " " << -z/2 << "\n" << -x/2 << " " << 0 << " " << -z/2 << "\n";
             outputFile << -x/2 << " " << 0 << " " << -z/2 << "\n" << -x/2 << " " << 0 << " " << z/2 << "\n" << x/2 << " " << 0 << " " << z/2 << "\n";
+
+            outputFile << 6 << "\n";
+
+            outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
+            outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";            
 
             
             printf("Done\n");
