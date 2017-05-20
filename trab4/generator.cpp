@@ -24,6 +24,205 @@ vector<float> vert;
 
 vector<float> normalV;
 vector<float> textV;
+vector<float> normalP;
+
+void normalize(float *a) { 
+	float l = sqrt(a[0]*a[0] + a[1] * a[1] + a[2] * a[2]); 
+	if(l==0){
+		a[0] = 0;
+		a[1] = 0;
+		a[2] = 1;
+	}
+	else{
+	a[0] = a[0]/l;
+	a[1] = a[1]/l; 
+	a[2] = a[2]/l;
+	} 
+
+}
+
+void cross(float *a, float *b, float *res) { 
+	res[0] = a[1]*b[2] - a[2]*b[1]; 
+	res[1] = a[2]*b[0] - a[0]*b[2]; 
+	res[2] = a[0]*b[1] - a[1]*b[0];
+}
+
+
+float* getNormals(int *patchs, int n_patch, float *vertices, int n_vertices, int tess, float t, float v){
+
+	float P1x,P1y,P1z,P2x,P2y,P2z,P3x,P3y,P3z,P4x,P4y,P4z,P5x,
+	P5y,P5z,P6x,P6y,P6z,P7x,P7y,P7z,P8x,P8y,P8z,P9x,P9y,P9z,P10x,
+	P10y,P10z,P11x,P11y,P11z,P12x,P12y,P12z,P13x,P13y,P13z,P14x,
+	P14y,P14z,P15x,P15y,P15z,P16x,P16y,P16z;
+	float a,b,c,d;
+	int i,j,k;
+
+	float m[4][4] = {	{-1.0f,  3.0f, -3.0f,  1.0f},
+						{ 3.0f, -6.0f,  3.0f,  0.0f},
+						{-3.0f,  3.0f,  0.0f,  0.0f},
+						{ 1.0f,  0.0f,  0.0f,  0.0f}};
+						
+	float mt[4][4] = {	{-1.0f,  3.0f, -3.0f,  1.0f},
+						{ 3.0f, -6.0f,  3.0f,  0.0f},
+						{-3.0f,  3.0f,  0.0f,  0.0f},
+						{ 1.0f,  0.0f,  0.0f,  0.0f}};
+
+	float ax[4];
+	float ay[4];
+	float az[4];
+
+	float ax1[4];
+	float ay1[4];
+	float az1[4];
+
+    k = n_patch;
+
+        P1x = vertices[3*patchs[(16*k)]];         
+        P1y = vertices[3*patchs[(16*k)]+1];     
+        P1z = vertices[3*patchs[(16*k)]+2];
+        P2x = vertices[3*patchs[(16*k+1)]];       
+        P2y = vertices[3*patchs[(16*k+1)]+1];  
+        P2z = vertices[3*patchs[(16*k)+1]+2];
+        P3x = vertices[3*patchs[(16*k+2)]];       
+        P3y = vertices[3*patchs[(16*k+2)]+1];   
+        P3z = vertices[3*patchs[(16*k)+2]+2];
+        P4x = vertices[3*patchs[(16*k+3)]];       
+        P4y = vertices[3*patchs[(16*k+3)]+1];   
+        P4z = vertices[3*patchs[(16*k)+3]+2];
+        P5x = vertices[3*patchs[(16*k+4)]];       
+        P5y = vertices[3*patchs[(16*k+4)]+1];   
+        P5z = vertices[3*patchs[(16*k)+4]+2];
+        P6x = vertices[3*patchs[(16*k+5)]];       
+        P6y = vertices[3*patchs[(16*k+5)]+1];   
+        P6z = vertices[3*patchs[(16*k)+5]+2];
+        P7x = vertices[3*patchs[(16*k+6)]];       
+        P7y = vertices[3*patchs[(16*k+6)]+1];   
+        P7z = vertices[3*patchs[(16*k)+6]+2];
+        P8x = vertices[3*patchs[(16*k+7)]];       
+        P8y = vertices[3*patchs[(16*k+7)]+1];   
+        P8z = vertices[3*patchs[(16*k)+7]+2];
+        P9x = vertices[3*patchs[(16*k+8)]];       
+        P9y = vertices[3*patchs[(16*k+8)]+1];   
+        P9z = vertices[3*patchs[(16*k)+8]+2];
+        P10x = vertices[3*patchs[(16*k+9)]];       
+        P10y = vertices[3*patchs[(16*k+9)]+1];   
+        P10z = vertices[3*patchs[(16*k)+9]+2];
+        P11x = vertices[3*patchs[(16*k+10)]];      
+        P11y = vertices[3*patchs[(16*k+10)]+1];  
+        P11z = vertices[3*patchs[(16*k)+10]+2];
+        P12x = vertices[3*patchs[(16*k+11)]];      
+        P12y = vertices[3*patchs[(16*k+11)]+1];  
+        P12z = vertices[3*patchs[(16*k)+11]+2];
+        P13x = vertices[3*patchs[(16*k+12)]];     
+        P13y = vertices[3*patchs[(16*k+12)]+1];  
+        P13z = vertices[3*patchs[(16*k)+12]+2];
+        P14x = vertices[3*patchs[(16*k+13)]];      
+        P14y = vertices[3*patchs[(16*k+13)]+1];  
+        P14z = vertices[3*patchs[(16*k)+13]+2];
+        P15x = vertices[3*patchs[(16*k+14)]];      
+        P15y = vertices[3*patchs[(16*k+14)]+1];  
+        P15z = vertices[3*patchs[(16*k)+14]+2];
+        P16x = vertices[3*patchs[(16*k+15)]];      
+        P16y = vertices[3*patchs[(16*k+15)]+1];  
+        P16z = vertices[3*patchs[(16*k)+15]+2];
+
+
+        ax[0]=m[0][0]*P1x+m[0][1]*P2x+m[0][2]*P3x+m[0][3]*P4x;
+		ax[1]=m[1][0]*P1x+m[1][1]*P2x+m[1][2]*P3x+m[1][3]*P4x;
+		ax[2]=m[2][0]*P1x+m[2][1]*P2x+m[2][2]*P3x+m[2][3]*P4x;
+		ax[3]=m[3][0]*P1x+m[3][1]*P2x+m[3][2]*P3x+m[3][3]*P4x;
+		
+		ay[0]=m[0][0]*P1y+m[0][1]*P2y+m[0][2]*P3y+m[0][3]*P4y;
+		ay[1]=m[1][0]*P1y+m[1][1]*P2y+m[1][2]*P3y+m[1][3]*P4y;
+		ay[2]=m[2][0]*P1y+m[2][1]*P2y+m[2][2]*P3y+m[2][3]*P4y;
+		ay[3]=m[3][0]*P1y+m[3][1]*P2y+m[3][2]*P3y+m[3][3]*P4y;
+
+		az[0]=m[0][0]*P1z+m[0][1]*P2z+m[0][2]*P3z+m[0][3]*P4z;
+		az[1]=m[1][0]*P1z+m[1][1]*P2z+m[1][2]*P3z+m[1][3]*P4z;
+		az[2]=m[2][0]*P1z+m[2][1]*P2z+m[2][2]*P3z+m[2][3]*P4z;
+		az[3]=m[3][0]*P1z+m[3][1]*P2z+m[3][2]*P3z+m[3][3]*P4z;
+
+		res[0]=3*pow(t,2)*ax[0]+2*pow(t,1)*ax[1]+ax[2];
+		res[1]=3*pow(t,2)*ay[0]+2*pow(t,1)*ay[1]+ay[2];
+		res[2]=3*pow(t,2)*az[0]+2*pow(t,1)*az[1]+az[2];
+
+		ax[0]=m[0][0]*P5x+m[0][1]*P6x+m[0][2]*P7x+m[0][3]*P8x;
+		ax[1]=m[1][0]*P5x+m[1][1]*P6x+m[1][2]*P7x+m[1][3]*P8x;
+		ax[2]=m[2][0]*P5x+m[2][1]*P6x+m[2][2]*P7x+m[2][3]*P8x;
+		ax[3]=m[3][0]*P5x+m[3][1]*P6x+m[3][2]*P7x+m[3][3]*P8x;
+		
+		ay[0]=m[0][0]*P5y+m[0][1]*P6y+m[0][2]*P7y+m[0][3]*P8y;
+		ay[1]=m[1][0]*P5y+m[1][1]*P6y+m[1][2]*P7y+m[1][3]*P8y;
+		ay[2]=m[2][0]*P5y+m[2][1]*P6y+m[2][2]*P7y+m[2][3]*P8y;
+		ay[3]=m[3][0]*P5y+m[3][1]*P6y+m[3][2]*P7y+m[3][3]*P8y;
+
+		az[0]=m[0][0]*P5z+m[0][1]*P6z+m[0][2]*P7z+m[0][3]*P8z;
+		az[1]=m[1][0]*P5z+m[1][1]*P6z+m[1][2]*P7z+m[1][3]*P8z;
+		az[2]=m[2][0]*P5z+m[2][1]*P6z+m[2][2]*P7z+m[2][3]*P8z;
+		az[3]=m[3][0]*P5z+m[3][1]*P6z+m[3][2]*P7z+m[3][3]*P8z;
+
+		res1[0]=3*pow(t,2)*ax[0]+2*pow(t,1)*ax[1]+ax[2];
+		res1[1]=3*pow(t,2)*ay[0]+2*pow(t,1)*ay[1]+ay[2];
+		res1[2]=3*pow(t,2)*az[0]+2*pow(t,1)*az[1]+az[2];
+
+		ax[0]=m[0][0]*P9x+m[0][1]*P10x+m[0][2]*P11x+m[0][3]*P12x;
+		ax[1]=m[1][0]*P9x+m[1][1]*P10x+m[1][2]*P11x+m[1][3]*P12x;
+		ax[2]=m[2][0]*P9x+m[2][1]*P10x+m[2][2]*P11x+m[2][3]*P12x;
+		ax[3]=m[3][0]*P9x+m[3][1]*P10x+m[3][2]*P11x+m[3][3]*P12x;
+		
+		ay[0]=m[0][0]*P9y+m[0][1]*P10y+m[0][2]*P11y+m[0][3]*P12y;
+		ay[1]=m[1][0]*P9y+m[1][1]*P10y+m[1][2]*P11y+m[1][3]*P12y;
+		ay[2]=m[2][0]*P9y+m[2][1]*P10y+m[2][2]*P11y+m[2][3]*P12y;
+		ay[3]=m[3][0]*P9y+m[3][1]*P10y+m[3][2]*P11y+m[3][3]*P12y;
+
+		az[0]=m[0][0]*P9z+m[0][1]*P10z+m[0][2]*P11z+m[0][3]*P12z;
+		az[1]=m[1][0]*P9z+m[1][1]*P10z+m[1][2]*P11z+m[1][3]*P12z;
+		az[2]=m[2][0]*P9z+m[2][1]*P10z+m[2][2]*P11z+m[2][3]*P12z;
+		az[3]=m[3][0]*P9z+m[3][1]*P10z+m[3][2]*P11z+m[3][3]*P12z;
+
+		res2[0]=3*pow(t,2)*ax[0]+2*pow(t,1)*ax[1]+ax[2];
+		res2[1]=3*pow(t,2)*ay[0]+2*pow(t,1)*ay[1]+ay[2];
+		res2[2]=3*pow(t,2)*az[0]+2*pow(t,1)*az[1]+az[2];
+
+		ax[0]=m[0][0]*P13x+m[0][1]*P14x+m[0][2]*P15x+m[0][3]*P16x;
+		ax[1]=m[1][0]*P13x+m[1][1]*P14x+m[1][2]*P15x+m[1][3]*P16x;
+		ax[2]=m[2][0]*P13x+m[2][1]*P14x+m[2][2]*P15x+m[2][3]*P16x;
+		ax[3]=m[3][0]*P13x+m[3][1]*P14x+m[3][2]*P15x+m[3][3]*P16x;
+		
+		ay[0]=m[0][0]*P13y+m[0][1]*P14y+m[0][2]*P15y+m[0][3]*P16y;
+		ay[1]=m[1][0]*P13y+m[1][1]*P14y+m[1][2]*P15y+m[1][3]*P16y;
+		ay[2]=m[2][0]*P13y+m[2][1]*P14y+m[2][2]*P15y+m[2][3]*P16y;
+		ay[3]=m[3][0]*P13y+m[3][1]*P14y+m[3][2]*P15y+m[3][3]*P16y;
+
+		az[0]=m[0][0]*P13z+m[0][1]*P14z+m[0][2]*P15z+m[0][3]*P16z;
+		az[1]=m[1][0]*P13z+m[1][1]*P14z+m[1][2]*P15z+m[1][3]*P16z;
+		az[2]=m[2][0]*P13z+m[2][1]*P14z+m[2][2]*P15z+m[2][3]*P16z;
+		az[3]=m[3][0]*P13z+m[3][1]*P14z+m[3][2]*P15z+m[3][3]*P16z;
+
+		res3[0]=3*pow(t,2)*ax[0]+2*pow(t,1)*ax[1]+ax[2];
+		res3[1]=3*pow(t,2)*ay[0]+2*pow(t,1)*ay[1]+ay[2];
+		res3[2]=3*pow(t,2)*az[0]+2*pow(t,1)*az[1]+az[2];
+
+		ax1[0]=mt[0][0]*res[0]+m[0][1]*res1[0]+m[0][2]*res2[0]+m[0][3]*res3[0];
+		ax1[1]=mt[1][0]*res[0]+m[1][1]*res1[0]+m[1][2]*res2[0]+m[1][3]*res3[0];
+		ax1[2]=mt[2][0]*res[0]+m[2][1]*res1[0]+m[2][2]*res2[0]+m[2][3]*res3[0];
+		ax1[3]=m[3][0]*res[0]+m[3][1]*res1[0]+m[3][2]*res2[0]+m[3][3]*res3[0];
+		
+		ay1[0]=m[0][0]*res[1]+m[0][1]*res1[1]+m[0][2]*res2[1]+m[0][3]*res3[1];
+		ay1[1]=m[1][0]*res[1]+m[1][1]*res1[1]+m[1][2]*res2[1]+m[1][3]*res3[1];
+		ay1[2]=m[2][0]*res[1]+m[2][1]*res1[1]+m[2][2]*res2[1]+m[2][3]*res3[1];
+		ay1[3]=m[3][0]*res[1]+m[3][1]*res1[1]+m[3][2]*res2[1]+m[3][3]*res3[1];
+
+		az1[0]=m[0][0]*res[2]+m[0][1]*res1[2]+m[0][2]*res2[2]+m[0][3]*res3[2];
+		az1[1]=m[1][0]*res[2]+m[1][1]*res1[2]+m[1][2]*res2[2]+m[1][3]*res3[2];
+		az1[2]=m[2][0]*res[2]+m[2][1]*res1[2]+m[2][2]*res2[2]+m[2][3]*res3[2];
+		az1[3]=m[3][0]*res[2]+m[3][1]*res1[2]+m[3][2]*res2[2]+m[3][3]*res3[2];
+
+		res4[0]=3*pow(t,2)*ax1[0]+2*pow(t,1)*ax1[1]+ax1[2];
+		res4[1]=3*pow(t,2)*ay1[0]+2*pow(t,1)*ay1[1]+ay1[2];
+		res4[2]=3*pow(t,2)*az1[0]+2*pow(t,1)*az1[1]+az1[2];
+
+}
 
 
 float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int tess, float t, float v){
@@ -196,7 +395,6 @@ float* getPoints(int *patchs, int n_patch, float *vertices, int n_vertices, int 
 		az1[2]=m[2][0]*res[2]+m[2][1]*res1[2]+m[2][2]*res2[2]+m[2][3]*res3[2];
 		az1[3]=m[3][0]*res[2]+m[3][1]*res1[2]+m[3][2]*res2[2]+m[3][3]*res3[2];
 
-
 		res4[0]=pow(v,3)*ax1[0]+pow(v,2)*ax1[1]+v*ax1[2]+ax1[3];
 		res4[1]=pow(v,3)*ay1[0]+pow(v,2)*ay1[1]+v*ay1[2]+ay1[3];
 		res4[2]=pow(v,3)*az1[0]+pow(v,2)*az1[1]+v*az1[2]+az1[3];
@@ -243,23 +441,60 @@ void patchR(FILE *f_patch, FILE *f, int tess){
 		vertV.push_back(res4[2]);
 		nvPatch++;
 
+		getNormals(patchs,co,vertices,n_vertices,tess,i*1.0/tess, j*1.0/tess);
+		normalize(res4);
+		normalP.push_back(res4[0]);
+		normalP.push_back(res4[1]);
+		normalP.push_back(res4[2]);
+
+		textV.push_back(i/tess);
+		textV.push_back(j/tess);
+
+
 		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, j*1.0/tess);
 		vertV.push_back(res4[0]);
 		vertV.push_back(res4[1]);
 		vertV.push_back(res4[2]);
 		nvPatch++;
 
-		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
-		vertV.push_back(res4[0]);
-		vertV.push_back(res4[1]);
-		vertV.push_back(res4[2]);
-		nvPatch++;
+		getNormals(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, j*1.0/tess);
+		normalize(res4);
+		normalP.push_back(res4[0]);
+		normalP.push_back(res4[1]);
+		normalP.push_back(res4[2]);
+
+		textV.push_back((i+1)/tess);
+		textV.push_back(j/tess);
 
 		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
 		vertV.push_back(res4[0]);
 		vertV.push_back(res4[1]);
 		vertV.push_back(res4[2]);
 		nvPatch++;
+
+		getNormals(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
+		normalize(res4);
+		normalP.push_back(res4[0]);
+		normalP.push_back(res4[1]);
+		normalP.push_back(res4[2]);
+
+		textV.push_back((i+1)/tess);
+		textV.push_back((j+1)/tess);
+
+		getPoints(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
+		vertV.push_back(res4[0]);
+		vertV.push_back(res4[1]);
+		vertV.push_back(res4[2]);
+		nvPatch++;
+
+		getNormals(patchs,co,vertices,n_vertices,tess,(i+1)*1.0/tess, (j+1)*1.0/tess);
+		normalize(res4);
+		normalP.push_back(res4[0]);
+		normalP.push_back(res4[1]);
+		normalP.push_back(res4[2]);
+
+		textV.push_back((i+1)/tess);
+		textV.push_back((j+1)/tess);
 
 		getPoints(patchs,co,vertices,n_vertices,tess,i*1.0/tess, (j+1)*1.0/tess);
 		vertV.push_back(res4[0]);
@@ -267,11 +502,29 @@ void patchR(FILE *f_patch, FILE *f, int tess){
 		vertV.push_back(res4[2]);
 		nvPatch++;
 
+		getNormals(patchs,co,vertices,n_vertices,tess,i*1.0/tess, (j+1)*1.0/tess);
+		normalize(res4);
+		normalP.push_back(res4[0]);
+		normalP.push_back(res4[1]);
+		normalP.push_back(res4[2]);
+
+		textV.push_back(i/tess);
+		textV.push_back((j+1)/tess);
+
 		getPoints(patchs,co,vertices,n_vertices,tess,i*1.0/tess, j*1.0/tess);
 		vertV.push_back(res4[0]);
 		vertV.push_back(res4[1]);
 		vertV.push_back(res4[2]);
 		nvPatch++;
+
+		getNormals(patchs,co,vertices,n_vertices,tess,i*1.0/tess, j*1.0/tess);
+		normalize(res4);
+		normalP.push_back(res4[0]);
+		normalP.push_back(res4[1]);
+		normalP.push_back(res4[2]);
+
+		textV.push_back(i/tess);
+		textV.push_back(j/tess);
 
 	}
 	}
@@ -279,8 +532,17 @@ void patchR(FILE *f_patch, FILE *f, int tess){
 
 }
 
+void calcularNormalTriangulo(float *a, float *b, float *c, float *res){
+	float U[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2]};
+	float V[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2]};
+
+	cross(U,V,res);
+}
+
 
 int main(int argc, char* argv[]) {
+
+	//for(int i=0;i<argc;i++) printf("%s\n",argv[i]);
     
 	FILE *f=NULL, *patch=NULL;
 
@@ -288,6 +550,9 @@ int main(int argc, char* argv[]) {
 
     if(strcmp(argv[1],"patch")==0 && argc == 5){
     	outputFile.open(argv[argc-1]);
+
+    	//printf("%s\n",argv[3]);
+    	//printf("%s\n",argv[argc-1]);
 
     	patch = fopen(argv[2],"r");
     	f = fopen(argv[argc-1],"w");
@@ -304,14 +569,80 @@ int main(int argc, char* argv[]) {
 
 	outputFile << tess << "\n";
 
-	for(int i=0;i<vert.size();i += 3){
+	for(int i=0;i<vert.size();i += 9){
 		outputFile << vert.at(i);
 		outputFile << " ";
 		outputFile << vert.at(i+1);
 		outputFile << " ";
 		outputFile << vert.at(i+2);
 		outputFile << "\n";
+		outputFile << vert.at(i+3);
+		outputFile << " ";
+		outputFile << vert.at(i+4);
+		outputFile << " ";
+		outputFile << vert.at(i+5);
+		outputFile << "\n";
+		outputFile << vert.at(i+6);
+		outputFile << " ";
+		outputFile << vert.at(i+7);
+		outputFile << " ";
+		outputFile << vert.at(i+8);
+		outputFile << "\n";
+
+		float p1 = vert.at(i);
+		float p2 = vert.at(i+1);
+		float p3 = vert.at(i+2);
+		float p4 = vert.at(i+3);
+		float p5 = vert.at(i+4);
+		float p6 = vert.at(i+5);
+		float p7 = vert.at(i+6);
+		float p8 = vert.at(i+7);
+		float p9 = vert.at(i+8);
+		float v1[3] = {p1,p2,p3};
+		float v2[3] = {p4,p5,p6};
+		float v3[3] = {p7,p8,p9};
+		float res[3];
+
+		/*calcularNormalTriangulo(v1,v2,v3,res);
+		normalize(res);
+
+		normalP.push_back(res[0]);
+		normalP.push_back(res[1]);
+		normalP.push_back(res[2]);
+
+		calcularNormalTriangulo(v2,v3,v1,res);
+		normalize(res);
+
+		normalP.push_back(res[0]);
+		normalP.push_back(res[1]);
+		normalP.push_back(res[2]);
+
+		calcularNormalTriangulo(v3,v1,v2,res);
+		normalize(res);
+
+		normalP.push_back(res[0]);
+		normalP.push_back(res[1]);
+		normalP.push_back(res[2]);*/
+
 	}
+
+	outputFile << nvPatch << "\n";
+
+	for(int i=0;i<normalP.size();i+=3){
+		outputFile << normalP.at(i);
+		outputFile << " ";
+		outputFile << normalP.at(i+1);
+		outputFile << " ";
+		outputFile << normalP.at(i+2);
+		outputFile << "\n";	
+	}
+
+	outputFile << nvPatch << "\n";
+
+	for(int i=0;i<textV.size();i+=2){ printf("%d\n",i); outputFile << textV.at(i) << " " << textV.at(i+1) <<  "\n"; }
+
+    printf("Done\n");
+    outputFile.close();
 
     }
 
@@ -323,31 +654,138 @@ int main(int argc, char* argv[]) {
 
 	outputFile << 36 << "\n";
 	
-	//lado
-	outputFile << 0 << " " << 0 << " " << 0 << "\n" << x << " " << 0 << " " << 0 << "\n" << 0 << " " << y << " " << 0 << "\n";
-	outputFile << x << " " << 0 << " " << 0 << "\n" << x << " " << y << " " << 0 << "\n" << 0 << " " << y << " " << 0 << "\n";
-	
-	//lado
-	outputFile << x << " " << 0 << " " << 0 << "\n" << x << " " << 0 << " " << -z << "\n" << x << " " << y << " " << 0 << "\n";
-	outputFile << x << " " << 0 << " " << -z << "\n" << x << " " << y << " " << -z << "\n" << x << " " << y << " " << 0 << "\n";
-	
-	//lado
-	outputFile << 0 << " " << 0 << " " << 0 << "\n" << 0 << " " << y << " " << 0 << "\n" << 0 << " " << 0 << " " << -z << "\n";
-	outputFile << 0 << " " << y << " " << 0 << "\n" << 0 << " " << y << " " << -z << "\n" << 0 << " " << 0 << " " << -z << "\n";
-	
-	//atras
-	outputFile << x << " " << 0 << " " << -z << "\n" << 0 << " " << 0 << " " << -z << "\n" << 0 << " " << y << " " << -z << "\n";
-	outputFile << x << " " << 0 << " " << -z << "\n" << 0 << " " << y << " " << -z << "\n" << x << " " << y << " " << -z << "\n";
-	
-	//topo
-	outputFile << 0 << " " << y << " " << -z << "\n" << 0 << " " << y << " " << 0 << "\n" << x << " " << y << " " << 0 << "\n";
-	outputFile << 0 << " " << y << " " << -z << "\n" << x << " " << y << " " << 0 << "\n" << x << " " << y << " " << -z << "\n";
-	
-	//base
-	outputFile << 0 << " " << 0 << " " << 0 << "\n" << 0 << " " << 0 << " " << -z << "\n" << x << " " << 0 << " " << 0 << "\n";
-	outputFile << 0 << " " << 0 << " " << -z << "\n" << x << " " << 0 << " " << -z << "\n" << x << " " << 0 << " " << 0 << "\n";
+			//frente
+            outputFile << x << " " << y << " " << 0 << "\n" << 0 << " " << y << " " << 0 << "\n" << x << " " << 0 << " " << 0 << "\n";
+            outputFile << 0 << " " << 0 << " " << 0 << "\n" << x << " " << 0 << " " << 0 << "\n" << 0 << " " << y << " " << 0 << "\n";
+
+            textV.push_back(0.0);
+            textV.push_back(0.8);
+
+            textV.push_back(0.0);
+            textV.push_back(0.2);
+
+            textV.push_back(0.25);
+            textV.push_back(0.8);
 
 
+            textV.push_back(0.25);
+            textV.push_back(0.2);
+
+            textV.push_back(0.25);
+            textV.push_back(0.8);
+
+            textV.push_back(0.0);
+            textV.push_back(0.2);
+
+            //lado esquerdo
+            outputFile << 0 << " " << y << " " << 0 << "\n" << 0 << " " << y << " " << -z << "\n" << 0 << " " << 0 << " " << 0 << "\n";
+            outputFile << 0 << " " << y << " " << -z << "\n" << 0 << " " << 0 << " " << -z << "\n" << 0 << " " << 0 << " " << 0 << "\n";
+
+            textV.push_back(0.0);
+            textV.push_back(0.0);
+
+            textV.push_back(0.0);
+            textV.push_back(1.0);
+
+            textV.push_back(0.0);
+            textV.push_back(0.2);
+
+            textV.push_back(0.0);
+            textV.push_back(1.0);
+
+            textV.push_back(1.0);
+            textV.push_back(0.2);
+
+            textV.push_back(0.0);
+            textV.push_back(0.2);
+
+            //lado direito
+            outputFile << x << " " << y << " " << 0 << "\n" << x << " " << 0 << " " << 0 << "\n" << x << " " << y << " " << -z << "\n";
+            outputFile << x << " " << 0 << " " << 0 << "\n" << x << " " << 0 << " " << -z << "\n" << x << " " << y << " " << -z << "\n";
+
+            textV.push_back(0.0);
+            textV.push_back(0.8);
+
+            textV.push_back(0.25);
+            textV.push_back(0.8);
+
+            textV.push_back(1.0);
+            textV.push_back(1.0);
+
+            textV.push_back(0.25);
+            textV.push_back(0.8);
+
+            textV.push_back(1.0);
+            textV.push_back(0.8);
+
+            textV.push_back(1.0);
+            textV.push_back(1.0);
+
+            //atras
+            outputFile << 0 << " " << y << " " << -z << "\n" << x << " " << y << " " << -z << "\n" << x << " " << 0 << " " << -z << "\n";
+            outputFile << 0 << " " << y << " " << -z << "\n" << x << " " << 0 << " " << -z << "\n" << 0 << " " << 0 << " " << -z << "\n";
+
+            textV.push_back(0.0);
+            textV.push_back(1.0);
+
+            textV.push_back(1.0);
+            textV.push_back(1.0);
+
+            textV.push_back(1.0);
+            textV.push_back(0.8);
+
+            textV.push_back(0.0);
+            textV.push_back(1.0);
+
+            textV.push_back(1.0);
+            textV.push_back(0.8);
+
+            textV.push_back(1.0);
+            textV.push_back(0.2);
+
+            //base
+            outputFile << x << " " << 0 << " " << -z << "\n" << x << " " << 0 << " " << 0 << "\n" << 0 << " " << 0 << " " << 0 << "\n";
+            outputFile << x << " " << 0 << " " << -z << "\n" << 0 << " " << 0 << " " << 0 << "\n" << 0 << " " << 0 << " " << -z << "\n";
+
+            textV.push_back(1.0);
+            textV.push_back(0.8);
+
+            textV.push_back(0.25);
+            textV.push_back(0.8);
+
+            textV.push_back(0.0);
+            textV.push_back(0.2);
+
+            textV.push_back(1.0);
+            textV.push_back(0.8);
+
+            textV.push_back(0.0);
+            textV.push_back(0.2);
+
+            textV.push_back(1.0);
+            textV.push_back(0.2);
+
+            //topo
+            outputFile << x << " " << y << " " << 0 << "\n" << x << " " << y << " " << -z << "\n" << 0 << " " << y << " " << 0 << "\n";
+            outputFile << x << " " << y << " " << -z << "\n" << 0 << " " << y << " " << -z << "\n" << 0 << " " << y << " " << 0 << "\n";
+
+            textV.push_back(0.0);
+            textV.push_back(0.8);
+
+            textV.push_back(1.0);
+            textV.push_back(1.0);
+
+            textV.push_back(0.0);
+            textV.push_back(0.0);
+
+            textV.push_back(1.0);
+            textV.push_back(1.0);
+
+            textV.push_back(0.0);
+            textV.push_back(1.0);
+
+            textV.push_back(0.0);
+            textV.push_back(0.0);
 
 
 	//normais
@@ -358,28 +796,30 @@ int main(int argc, char* argv[]) {
 	outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
 
 	//lado
-	outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
-	outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
+	outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
+	outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
 
 	//lado
-	outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
-	outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
+	outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
+	outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
 
 	//atras
 	outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
 	outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
 
+	//base
+	outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
+	outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
+
 	//topo
 	outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
 	outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
 
-	//base
-	outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
-	outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";	
+	//texturas
 
+	outputFile << 36 << "\n";
 
-
-
+	for(int i=0;i<textV.size();i+=2) outputFile << textV.at(i) << " " << textV.at(i+1) <<  "\n";	
 
 	printf("Done\n");
 	outputFile.close();
@@ -402,22 +842,109 @@ int main(int argc, char* argv[]) {
             float y1 = (y/(divisoes +1))*j;
 
             outputFile << xs1 << " " << ys1 << " " << 0 << "\n" << x1 << " " << ys1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n";
-            outputFile << x1 << " " << ys1 << " " << 0 << "\n" << x1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n";
+            outputFile << x1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n" << x1 << " " << ys1 << " " << 0 << "\n";
+
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
 
             outputFile << x1 << " " << ys1 << " " << 0 << "\n" << x1 << " " << ys1 << " " << -z << "\n" << x1 << " " << y1 << " " << 0 << "\n";
             outputFile << x1 << " " << ys1 << " " << -z << "\n" << x1 << " " << y1 << " " << -z << "\n" << x1 << " " << y1 << " " << 0 << "\n";
 
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.25*j/divisoes);
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.0*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.25*j/divisoes);
+
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.0*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.25*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.0*j/divisoes);
+
+
             outputFile << xs1 << " " << ys1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << ys1 << " " << -z << "\n";
             outputFile << xs1 << " " << y1 << " " << 0 << "\n" << xs1 << " " << y1 << " " << -z << "\n" << xs1 << " " << ys1 << " " << -z << "\n";
+
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.0*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+
+            textV.push_back(0.0*i/divisoes);
+            textV.push_back(0.0*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.0*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+
 
             outputFile << x1 << " " << ys1 << " " << -z << "\n" << xs1 << " " << ys1 << " " << -z << "\n" << xs1 << " " << y1 << " " << -z << "\n";
             outputFile << x1 << " " << ys1 << " " << -z << "\n" << xs1 << " " << y1 << " " << -z << "\n" << x1 << " " << y1 << " " << -z << "\n";
 
+            textV.push_back(0.5*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.75*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.75*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+
+            textV.push_back(0.5*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.75*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.5*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+
             outputFile << xs1 << " " << y1 << " " << -z << "\n" << xs1 << " " << y1 << " " << 0 << "\n" << x1 << " " << y1 << " " << 0 << "\n";
             outputFile << xs1 << " " << y1 << " " << -z << "\n" << x1 << " " << y1 << " " << 0 << "\n" << x1 << " " << y1 << " " << -z << "\n";
 
+            textV.push_back(0.5*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+
+            textV.push_back(0.5*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(0.25*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+
             outputFile << xs1 << " " << ys1 << " " << 0 << "\n" << xs1 << " " << ys1 << " " << -z << "\n" << x1 << " " << ys1 << " " << 0 << "\n";
             outputFile << xs1 << " " << ys1 << " " << -z << "\n" << x1 << " " << ys1 << " " << -z << "\n" << x1 << " " << ys1 << " " << 0 << "\n";
+            
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.75*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+
+            textV.push_back(0.75*i/divisoes);
+            textV.push_back(0.66*j/divisoes);
+            textV.push_back(0.75*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+            textV.push_back(1.0*i/divisoes);
+            textV.push_back(0.33*j/divisoes);
+
             }
         }
 
@@ -426,30 +953,35 @@ int main(int argc, char* argv[]) {
         for(int i = divisoes+1;i>0;i--){
             for(int j=divisoes+1;j>0;j--) {
 				//lado
-				outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
-				outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
+	//lado
+	outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
+	outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
 
-				//lado
-				outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
-				outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
+	//lado
+	outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
+	outputFile << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n" << 1 << " " << 0 << " " << 0 << "\n";
 
-				//lado
-				outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
-				outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
+	//lado
+	outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
+	outputFile << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n" << -1 << " " << 0 << " " << 0 << "\n";
 
-				//atras
-				outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
-				outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
+	//atras
+	outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
+	outputFile << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n" << 0 << " " << 0 << " " << -1 << "\n";
 
-				//topo
-				outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
-				outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
+	//base
+	outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
+	outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
 
-				//base
-				outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";
-				outputFile << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n" << 0 << " " << -1 << " " << 0 << "\n";	
+	//topo
+	outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
+	outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
             }
         }
+
+    outputFile << 36*(divisoes+1)*(divisoes+1) << "\n";
+	for(int i=0;i<textV.size();i+=2) outputFile << textV.at(i) << " " << textV.at(i+1) <<  "\n";	
+
         printf("Done\n");
         outputFile.close();}
     
@@ -460,6 +992,8 @@ int main(int argc, char* argv[]) {
 	float stacks = atoi(argv[4]);
 	float slices = atoi(argv[3]);
 	float radius = atoi(argv[2]);
+
+	float v1[3];
 	
 	outputFile << stacks*slices*6 << "\n";	//6 porque e 6 vertices por cada 2 triangulos
 
@@ -473,15 +1007,20 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << "\n";
 
-			normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
+			v1[0] = radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
+			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*j);
+			v1[2] =  radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
+			normalize(v1);
+
+			normalV.push_back(v1[0]);
+			normalV.push_back(v1[1]);
+			normalV.push_back(v1[2]);
+
+			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
+			//normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
 
 			textV.push_back(i*1.0/slices);
 			textV.push_back(j*1.0/stacks);
-
-			//textV.push_back((atan2((cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j)),sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j))/(2*M_PI)) + 0.5);
-			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*j))/M_PI) - .5);	
 
 			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << " ";
@@ -490,15 +1029,17 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << "\n";
 
-			normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j));
+			v1[0] = radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j);
+			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*j);
+			v1[2] =  radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j);
+			normalize(v1);
+
+			normalV.push_back(v1[0]);
+			normalV.push_back(v1[1]);
+			normalV.push_back(v1[2]);
 
 			textV.push_back((i+1)*1.0/slices);
 			textV.push_back(j*1.0/stacks);
-
-			//textV.push_back((atan2((cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j)),sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*j))/(2*M_PI)) + 0.5);
-			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*j))/M_PI) - .5);
 
 			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << " ";
@@ -507,15 +1048,21 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << "\n";
 
-			normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+
+			v1[0] = radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
+			v1[2] = radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			normalize(v1);
+
+			normalV.push_back(v1[0]);
+			normalV.push_back(v1[1]);
+			normalV.push_back(v1[2]);
 
 			textV.push_back((i+1)*1.0/slices);
 			textV.push_back((j+1)*1.0/stacks);
-
-			//textV.push_back((atan2((cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1))),sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)))/(2*M_PI)) + 0.5);
-			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*(j+1)))/M_PI) - .5);
 
 			//segundo triangulo
 			outputFile << radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
@@ -525,15 +1072,21 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << "\n";
 
-			normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+
+			v1[0] = radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
+			v1[2] = radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			normalize(v1);
+
+			normalV.push_back(v1[0]);
+			normalV.push_back(v1[1]);
+			normalV.push_back(v1[2]);
 
 			textV.push_back((i+1)*1.0/slices);
 			textV.push_back((j+1)*1.0/stacks);
-
-			//textV.push_back((atan2((cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1))),sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)))/(2*M_PI)) + 0.5);
-			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*(j+1)))/M_PI) - .5);
 
 			outputFile << radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << " ";
@@ -542,15 +1095,21 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << "\n";
 
-			normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));	
+			//normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
+			//normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));	
+
+			v1[0] = radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
+			v1[2] = radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
+			normalize(v1);
 
 			textV.push_back(i*1.0/slices);
 			textV.push_back((j+1)*1.0/stacks);
 
-			//textV.push_back((atan2((cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1))),sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)))/(2*M_PI)) + 0.5);
-			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*(j+1)))/M_PI) - .5);
+			normalV.push_back(v1[0]);
+			normalV.push_back(v1[1]);
+			normalV.push_back(v1[2]);
 
 			outputFile << radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << " ";
@@ -559,15 +1118,21 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
 			outputFile << "\n";
 
-			normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
-			normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
+			v1[0] = radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
+			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*j);
+			v1[2] = radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j);
+			normalize(v1);
+
+			normalV.push_back(v1[0]);
+			normalV.push_back(v1[1]);
+			normalV.push_back(v1[2]);
+
+			//normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
+			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
+			//normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
 
 			textV.push_back(i*1.0/slices);
 			textV.push_back(j*1.0/stacks);
-
-			//textV.push_back((atan2((cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j)),sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j))/(2*M_PI)) + 0.5);
-			//textV.push_back((asin(sin((M_PI/2)-(M_PI/stacks)*j))/M_PI) - .5);
 
 		}
 	}
@@ -608,12 +1173,16 @@ int main(int argc, char* argv[]) {
        		normalV.push_back(0.0);
 			normalV.push_back(-1.0);
 			normalV.push_back(0.0);
+
        		normalV.push_back(0.0);
 			normalV.push_back(-1.0);
 			normalV.push_back(0.0);
+
        		normalV.push_back(0.0);
 			normalV.push_back(-1.0);
-			normalV.push_back(0.0);			
+			normalV.push_back(0.0);
+			textV.push_back(i/slices);
+			textV.push_back(1);		
        	}
 
 	for(int j=0;j<stacks;j++){
@@ -629,6 +1198,9 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(0.0);
 			normalV.push_back(cos((2*M_PI/slices)*i));
 
+			textV.push_back(i*1.0/slices);
+			textV.push_back(j*1.0/stacks);
+
 			outputFile << (radius - (radius*j/stacks)) * sin((2*M_PI/slices)*(i+1));
 			outputFile << " ";
 			outputFile << (height*j/stacks);
@@ -640,16 +1212,8 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(0.0);
 			normalV.push_back(cos((2*M_PI/slices)*(i+1)));
 
-			outputFile << (radius - (radius*(j+1)/stacks)) * sin((2*M_PI/slices)*(i+1));
-			outputFile << " ";
-			outputFile << (height*(j+1)/stacks);
-			outputFile << " ";
-			outputFile << (radius - (radius*(j+1)/stacks)) * cos((2*M_PI/slices)*(i+1));
-			outputFile << "\n";
-
-			normalV.push_back(sin((2*M_PI/slices)*(i+1)));
-			normalV.push_back(0.0);
-			normalV.push_back(cos((2*M_PI/slices)*(i+1)));
+			textV.push_back((i+1)*1.0/slices);
+			textV.push_back(j*1.0/stacks);
 
 			outputFile << (radius - (radius*(j+1)/stacks)) * sin((2*M_PI/slices)*(i+1));
 			outputFile << " ";
@@ -661,6 +1225,23 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(sin((2*M_PI/slices)*(i+1)));
 			normalV.push_back(0.0);
 			normalV.push_back(cos((2*M_PI/slices)*(i+1)));
+
+			textV.push_back((i+1)*1.0/slices);
+			textV.push_back((j+1)*1.0/stacks);
+
+			outputFile << (radius - (radius*(j+1)/stacks)) * sin((2*M_PI/slices)*(i+1));
+			outputFile << " ";
+			outputFile << (height*(j+1)/stacks);
+			outputFile << " ";
+			outputFile << (radius - (radius*(j+1)/stacks)) * cos((2*M_PI/slices)*(i+1));
+			outputFile << "\n";
+
+			normalV.push_back(sin((2*M_PI/slices)*(i+1)));
+			normalV.push_back(0.0);
+			normalV.push_back(cos((2*M_PI/slices)*(i+1)));
+
+			textV.push_back((i+1)*1.0/slices);
+			textV.push_back((j+1)*1.0/stacks);
 
 			outputFile << (radius - (radius*(j+1)/stacks)) * sin((2*M_PI/slices)*i);
 			outputFile << " ";
@@ -673,6 +1254,9 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(0.0);
 			normalV.push_back(cos((2*M_PI/slices)*i));
 
+			textV.push_back(i*1.0/slices);
+			textV.push_back((j+1)*1.0/stacks);
+
 			outputFile << (radius - (radius*j/stacks)) * sin((2*M_PI/slices)*i);
 			outputFile << " ";
 			outputFile << (height*j/stacks);
@@ -684,13 +1268,19 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(0.0);
 			normalV.push_back(cos((2*M_PI/slices)*i));
 
+			textV.push_back(i*1.0/slices);
+			textV.push_back(j*1.0/stacks);
+
 		}
 	}
+
 
 	outputFile << stacks*slices*6 + 3*slices << "\n";
 	for(int i=0;i<normalV.size();i+=3) outputFile << normalV.at(i) << " " << normalV.at(i+1) << " " << normalV.at(i+2) << "\n";
 	
 	//textura
+	outputFile << stacks*slices*6 + 3*slices << "\n";
+	for(int i=0;i<textV.size();i+=2) outputFile << textV.at(i) << " " << textV.at(i+1) << "\n";
 
 	outputFile.close();		
     	printf("Done\n");
@@ -710,8 +1300,12 @@ int main(int argc, char* argv[]) {
 
             outputFile << 6 << "\n";
 
-            outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";
-            outputFile << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n" << 0 << " " << 0 << " " << 1 << "\n";            
+            outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";
+            outputFile << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n" << 0 << " " << 1 << " " << 0 << "\n";   
+            
+            outputFile << 6 << "\n";
+            outputFile << 1 << " " << 0 << "\n" << 1 << " " << 1 << "\n" << 0 << " " << 1 << "\n";
+            outputFile << 0 << " " << 1 << "\n" << 0 << " " << 0 << "\n" << 1 << " " << 0 << "\n";          
 
             
             printf("Done\n");

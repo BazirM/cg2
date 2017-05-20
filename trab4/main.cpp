@@ -15,6 +15,7 @@
 //ver agora a questão da textura e normais no teapot, textura no plano, cone, ...
 //qestao se a luz dá bem ou nao, etc
 //preencher o xml
+//colocar luz "antes" do gllookat, etc ..
 
 using namespace std;
 #define POINT_COUNT 5
@@ -24,15 +25,21 @@ float y[3]={0,-1,0};
 vector<std::string> modelos;
 vector<float> pontosT;
 vector<float> pontosLuz;
-int nvertices, nvertices2, tess, cont, contSoma, nverticesN, nverticesT;
+int nvertices, nvertices2, tess, cont, contSoma, nverticesN, nverticesT, nverticesNP;
 float timer, ang, tempo = 1.0, temp = 0.0;
+
+int specular, ambient, emission, diffuse, diffuseL, specularL, emissionL, ambientL;
 
 int nv = 0;
 int nvp = 0;
 
+	int frame = 0;
+
 vector<GLfloat> norm;
 vector<GLfloat> normP;
 vector<GLfloat> normT;
+vector<std::string> strLuzes;
+vector<std::string> strLuzesMod;
 
 vector<GLfloat> vertices, verticesTP;
 
@@ -170,8 +177,8 @@ void processKeys(unsigned char c, int xx, int yy) {
   switch (c){
   case 'q': raio=raio+10.0; break;
   case 'e': raio=raio-10.0; break;
-  case 'w': if((beta+0.1<=M_PI/2) && (beta+0.1>=-M_PI/2)) beta+=0.1; break;
-  case 's': if((beta-0.1<=M_PI/2) && (beta-0.1>=-M_PI/2)) beta-=0.1; break;
+  case 'w': if((beta+0.1<M_PI/2) && (beta+0.1>-M_PI/2)) beta+=0.1; break;
+  case 's': if((beta-0.1<M_PI/2) && (beta-0.1>-M_PI/2)) beta-=0.1; break;
   case 'm': alfa+=0.1; break;
   case 'n': alfa-=0.1; break;
   default: break;
@@ -194,9 +201,6 @@ void desenhaModelo(int v, int mv){
 
 	glMaterialfv(GL_FRONT, GL_SPECULAR, red);
 	glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diff);
 
 	float purple[4] = { 1.0f,0.0f,1.0f, 1.0f };
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, purple);*/
@@ -225,9 +229,6 @@ void desenhaTeap(int v, int mv){
 	GLfloat diff[4] = {1.0, 1.0, 1.0, 1.0};
 	float red[4] = {0.8f, 0.2f, 0.2f, 1.0f};
 
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
-
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, grena);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, diff);
 */
@@ -249,18 +250,6 @@ void desenhaTeap(int v, int mv){
 	glDrawArrays(GL_TRIANGLES, mv, (mv + v));
 
 }
-
-/*void desenhaTeap(){
-
-	glGenBuffers(1,&buffer2);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer2);
-	glBufferData(GL_ARRAY_BUFFER, verticesTP.size() * sizeof(float), &verticesTP[0], GL_STATIC_DRAW);
-
-	glVertexPointer(3,GL_FLOAT,0,0);
-    //glEnableClientState(GL_VERTEX_ARRAY);
-    glDrawArrays(GL_TRIANGLES, 0, verticesTP.size()/3);
-
-}*/
 
 
 void prepareModels(){
@@ -314,12 +303,27 @@ void renderScene(void) {
 	float z[3];
 	float pos[4] = {0.0, 0.0, 0.0, 1.0};
 
+    float amM[3];
+    float emiM[3];
+    float difM[3];
+    float specM[3];  
+
 	contSoma = 0;
 	cont = 0;
 
+	specular = 0;
+	diffuse = 0;
+	emission = 0;
+	ambient = 0;
+
+	specularL = 0;
+	diffuseL = 0;
+	emissionL = 0;
+	ambientL = 0;
+
+
 	nv = 0;
 	nvp = 0;
-
 
     // clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -330,19 +334,10 @@ void renderScene(void) {
               0.0,0.0,0.0,
               0.0f,1.0f,0.0f);
 
-    float lpos[4] = { 0.0,0.0,0.0,1.0 };
-    float lpo[4] = { 0.2,0.2,0.2,1.0 };
-    float lp[4] = { 1.0,1.0,1.0,1.0 };
-
-    glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lpo);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lp);//apenase um exemplo*/
-
     for(int i=0;i<modelos.size();){
 		if(strcmp("group",modelos.at(i).c_str())==0){
 			glPushMatrix();
 			glDisable(GL_TEXTURE_2D);
-			//glClear(GL_COLOR_BUFFER_BIT);
 			i++;
 		}
 		
@@ -356,7 +351,7 @@ void renderScene(void) {
 			timer = glutGet(GLUT_ELAPSED_TIME);
 			tempo = atof(modelos.at(i+1).c_str());
 			cont = atoi(modelos.at(i+2).c_str());
-		    glColor3f(255.0/255.0,255.0/255.0,255.0/255.0);
+		    //glColor3f(255.0/255.0,255.0/255.0,255.0/255.0);
 			renderCatmullRomCurve();
 			getGlobalCatmullRomPoint(timer/(tempo*1000),res,deriv);
 			normalize(deriv);
@@ -406,14 +401,54 @@ void renderScene(void) {
         	}
 
         else if(strcmp("lights",modelos.at(i).c_str())==0){
+        	int acum = 0;	//apontador para o inicio do array das luzes
+        	float am[3];
+        	float emi[3];
+        	float dif[3];
+        	float spec[3];        	
         	float nluzes = atof(modelos.at(i+1).c_str());
         	for(int j=0;j<nluzes;j++){
+        		glEnable(GL_LIGHT0+j);
         		float c[4] = { pontosLuz.at((j*4)+1), pontosLuz.at((j*4)+2), pontosLuz.at((j*4)+3), pontosLuz.at((j*4)+0) };
-        		glLightfv(GL_LIGHT0+j, GL_POSITION, c);	//falta a questao das outras luzes com a position no xml(diffuse, etc..)
-        		glLightfv(GL_LIGHT0+j, GL_AMBIENT, lpo);
-				glLightfv(GL_LIGHT0+j, GL_DIFFUSE, lp);//apenas exemplo
+        		glLightfv(GL_LIGHT0+j, GL_POSITION, c);
+        		float nComp = atof(modelos.at(i+2+j).c_str());
+        		for(int k=acum;k<acum+nComp;){
+        			if(strcmp("ambient",strLuzes.at(k).c_str()) == 0){
+        				am[0] = atof(strLuzes.at(k+1).c_str());
+        				am[1] = atof(strLuzes.at(k+2).c_str());
+        				am[2] = atof(strLuzes.at(k+3).c_str());
+        				ambientL = 1;
+        				//glLightfv(GL_LIGHT0+j, GL_AMBIENT, am);
+        				k+=4;
+        			}
+        			else if(strcmp("emission",strLuzes.at(k).c_str()) == 0){
+        				emi[0] = atof(strLuzes.at(k+1).c_str());
+        				emi[1] = atof(strLuzes.at(k+2).c_str());
+        				emi[2] = atof(strLuzes.at(k+3).c_str());
+        				emissionL = 1;
+        				//glLightfv(GL_LIGHT0+j, GL_EMISSION, emi);
+        				k+=4;
+        			}
+        			else if(strcmp("specular",strLuzes.at(k).c_str()) == 0){
+        				dif[0] = atof(strLuzes.at(k+1).c_str());
+        				dif[1] = atof(strLuzes.at(k+2).c_str());
+        				dif[2] = atof(strLuzes.at(k+3).c_str());
+        				specularL = 1;
+        				//glLightfv(GL_LIGHT0+j, GL_SPECULAR, dif);
+        				k+=4;
+        			}
+        			else if(strcmp("diffuse",strLuzes.at(k).c_str()) == 0){
+        				spec[0] = atof(strLuzes.at(k+1).c_str());
+        				spec[1] = atof(strLuzes.at(k+2).c_str());
+        				spec[2] = atof(strLuzes.at(k+3).c_str());
+        				diffuseL = 1;
+        				//glLightfv(GL_LIGHT0+j, GL_DIFFUSE, spec);
+        				k+=4;
+        			}
+        		}
+        		acum += nComp;
         	}
-        	i+=2;
+        	i+=2+nluzes;
         }
 
         else if(strcmp("texture",modelos.at(i).c_str())==0){
@@ -424,40 +459,63 @@ void renderScene(void) {
         }
 
 
-		else if(strcmp("color",modelos.at(i).c_str())==0){
-            	float dr = atof(modelos.at(i+1).c_str());
-           		float dg = atof(modelos.at(i+2).c_str());
-            	float db = atof(modelos.at(i+3).c_str());
-            	float sr = atof(modelos.at(i+4).c_str());
-           		float sg = atof(modelos.at(i+5).c_str());
-            	float sb = atof(modelos.at(i+6).c_str());
-            	float er = atof(modelos.at(i+7).c_str());
-           		float eg = atof(modelos.at(i+8).c_str());
-            	float eb = atof(modelos.at(i+9).c_str());
-            	float ar = atof(modelos.at(i+10).c_str());
-           		float ag = atof(modelos.at(i+11).c_str());
-            	float ab = atof(modelos.at(i+12).c_str());
-				float diff[3] = {dr/255.0,dg/255.0,db/255.0};
-				float amb[3] = {ar/255.0,ag/255.0,ab/255.0};
-				float spec[3] = {sr/255.0,sg/255.0,sb/255.0};
-				float emiss[3] = {er/255.0,eg/255.0,eb/255.0};
-				glMaterialfv(GL_FRONT, GL_DIFFUSE, diff);
-				//glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
-				glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
-				glMaterialfv(GL_FRONT, GL_EMISSION, emiss);
-				//glMaterialf(GL_FRONT, GL_SHININESS, 100.0f);
-            	i+=13;
+		else if(strcmp("color",modelos.at(i).c_str())==0){  
+            	int num = atoi(modelos.at(i+1).c_str());
+        		for(int k=i+2;k<i+2+num;){
+        			if(strcmp("ambient",modelos.at(k).c_str()) == 0){
+        				amM[0] = atof(modelos.at(k+1).c_str())/255.0;
+        				amM[1] = atof(modelos.at(k+2).c_str())/255.0;
+        				amM[2] = atof(modelos.at(k+3).c_str())/255.0;
+        				ambient = 1;
+						//glMaterialfv(GL_FRONT, GL_AMBIENT, amM);
+        				k+=4;
+        			}
+        			else if(strcmp("emission",modelos.at(k).c_str()) == 0){
+        				emiM[0] = atof(modelos.at(k+1).c_str())/255.0;
+        				emiM[1] = atof(modelos.at(k+2).c_str())/255.0;
+        				emiM[2] = atof(modelos.at(k+3).c_str())/255.0;
+        				emission = 1;
+						//glMaterialfv(GL_FRONT, GL_EMISSION, emiM);
+        				k+=4;
+        			}
+        			else if(strcmp("specular",modelos.at(k).c_str()) == 0){
+        				specM[0] = atof(modelos.at(k+1).c_str())/255.0;
+        				specM[1] = atof(modelos.at(k+2).c_str())/255.0;
+        				specM[2] = atof(modelos.at(k+3).c_str())/255.0;
+        				specular = 1;
+						//glMaterialfv(GL_FRONT, GL_SPECULAR, specM);
+						//glMaterialf(GL_FRONT, GL_SHININESS, 100.0f);
+        				k+=4;
+        			}
+        			else if(strcmp("diffuse",modelos.at(k).c_str()) == 0){
+        				difM[0] = atof(modelos.at(k+1).c_str())/255.0;
+        				difM[1] = atof(modelos.at(k+2).c_str())/255.0;
+        				difM[2] = atof(modelos.at(k+3).c_str())/255.0;
+        				diffuse = 1;
+						//glMaterialfv(GL_FRONT, GL_DIFFUSE, difM);
+        				k+=4;
+        			}
+        		}
+            	i+=num+2;
 		}
 
 		else if(strcmp("patch",modelos.at(i).c_str())==0){
-			desenhaTeap(atoi(modelos.at(i+1).c_str()), nvp);
 			nvp += atoi(modelos.at(i+1).c_str());
+			desenhaTeap(atoi(modelos.at(i+1).c_str()), nvp);
+			if(diffuse == 1){glMaterialfv(GL_FRONT, GL_DIFFUSE, difM); diffuse=0;}
+			if(ambient == 1){glMaterialfv(GL_FRONT, GL_AMBIENT, amM); ambient=0;}
+			if(specular == 1){glMaterialfv(GL_FRONT, GL_SPECULAR, specM); glMaterialf(GL_FRONT, GL_SHININESS, 100.0f); specular=0;}
+			if(emission == 1){glMaterialfv(GL_FRONT, GL_EMISSION, emiM); emission=0;}
 		 i=i+2;
 	     }
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
 			int numVert = atoi(modelos.at(i+1).c_str());
 			desenhaModelo(numVert, nv);
+			if(diffuse == 1){glMaterialfv(GL_FRONT, GL_DIFFUSE, difM); diffuse=0;}
+			if(ambient == 1){glMaterialfv(GL_FRONT, GL_AMBIENT, amM); ambient=0;}
+			if(specular == 1){glMaterialfv(GL_FRONT, GL_SPECULAR, specM); glMaterialf(GL_FRONT, GL_SHININESS, 100.0f); specular=0;}
+			if(emission == 1){glMaterialfv(GL_FRONT, GL_EMISSION, emiM); emission=0;}
 			nv += numVert;
 		 	i=i+2;
 	     }
@@ -475,10 +533,6 @@ void calcularNormalTriangulo(float *a, float *b, float *c, float *res){
 	float V[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2]};
 
 	cross(U,V,res);
-
-	//res[0] = U[1]*V[2] - U[2]*V[1];
-	//res[1] = U[2]*V[0] - U[0]*V[2];
-	//res[2] = U[0]*V[1] - U[1]*V[0];
 
 
 }
@@ -524,10 +578,15 @@ void lerXML(TiXmlElement* e){
 
 	//char buff[15];
 	const char* pAttrib;
+	const char* pAttrib2;
+	const char* pAttrib3;
 	const char* l[4] = {"type", "posX", "posY", "posZ"};
 	const char* s[3] = {"X", "Y", "Z"};
 	const char* t[4] = {"axisX", "axisY", "axisZ"};
 	const char* mod[13] = {"file", "diffR", "diffG", "diffB", "specR", "specG", "specB", "emissR", "emissG", "emissB", "ambR", "ambG", "ambB"};
+
+	int nElems = 0;
+
 
 	while(e){				
 			if(strcmp("group",e->Value()) == 0){
@@ -537,6 +596,8 @@ void lerXML(TiXmlElement* e){
 
 			else if(strcmp("lights",e->Value()) == 0){
 				int n_luzes = 0;
+				int n_prop = 0;
+				TiXmlElement* n;
 				char str[15];
 				if(e==NULL) printf("Erro no scale.\n");
 				modelos.push_back(e->Value());
@@ -551,16 +612,94 @@ void lerXML(TiXmlElement* e){
 						if(pAttrib)
 							pontosLuz.push_back(atof(pAttrib));
 						else pontosLuz.push_back(0.0);
-						}
+					}
+					n = m->FirstChildElement("ambient");
+					if(n!=NULL){
+							strLuzes.push_back("ambient");
+							pAttrib=n->Attribute("r");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("g");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("b");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+					}
+					n = m->FirstChildElement("diffuse");
+					if(n!= NULL){
+							strLuzes.push_back("diffuse");
+							pAttrib=n->Attribute("r");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("g");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("b");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+					}
+					n = m->FirstChildElement("specular");
+					if(n!= NULL){
+							strLuzes.push_back("specular");
+							pAttrib=n->Attribute("r");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("g");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("b");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+					}
+					n = m->FirstChildElement("emission");
+					if(n!= NULL){
+							strLuzes.push_back("emission");
+							pAttrib=n->Attribute("r");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("g");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+							pAttrib=n->Attribute("b");
+							if(pAttrib)
+								strLuzes.push_back(pAttrib);
+							else strLuzes.push_back("0.0");
+					}
+					strLuzes.push_back("|");	//para separar as componentes de cada luz
 					m=m->NextSiblingElement();
 					}
 				sprintf(str, "%d", n_luzes);
 				modelos.push_back(str);
+				int cont = 0;
+				for(int i=0;i<strLuzes.size();i++){
+					if(strLuzes.at(i) == "|"){
+						strLuzes.erase(strLuzes.begin() + i);
+						sprintf(str, "%d", cont);
+						modelos.push_back(str);
+						cont = 0;
+						i--;
+					}
+					else cont++;
+				}
 				e=e->NextSiblingElement();
 			}
 				
 			else if(strcmp("models",e->Value()) == 0){
+				strLuzesMod.clear();
 				char buff[15];
+				int nPropM = 0;
 				if(e==NULL) printf("Erro no models.\n");
 				TiXmlElement* m = e->FirstChildElement("model");
 				pAttrib = m->Attribute("texture");
@@ -573,11 +712,32 @@ void lerXML(TiXmlElement* e){
 				}
 				while(m){
 					modelos.push_back("color");
-					for(int i=1;i<13;i++){
-						pAttrib = m->Attribute(mod[i]);
-						if(pAttrib)
-							modelos.push_back(pAttrib);
-						else modelos.push_back("0.0");
+					for(int r=1;r<13;r+=3){
+						pAttrib = m->Attribute(mod[r]);
+						pAttrib2 = m->Attribute(mod[r+1]);
+						pAttrib3 = m->Attribute(mod[r+2]);
+						if(!(pAttrib || pAttrib2 || pAttrib3)){ }
+						else{
+							if(r==1) strLuzesMod.push_back("diffuse");
+							if(r==4) strLuzesMod.push_back("specular");
+							if(r==7) strLuzesMod.push_back("emission");
+							if(r==10) strLuzesMod.push_back("ambient");
+							if(pAttrib)
+								strLuzesMod.push_back(pAttrib);
+							else strLuzesMod.push_back("0.0");
+							if(pAttrib2)
+								strLuzesMod.push_back(pAttrib2);
+							else strLuzesMod.push_back("0.0");
+							if(pAttrib3)
+								strLuzesMod.push_back(pAttrib3);
+							else strLuzesMod.push_back("0.0");
+							nPropM += 4;
+						}
+					}
+    				sprintf(buff, "%d", nPropM);
+    				modelos.push_back(buff);
+					for(int k=0; k<strLuzesMod.size(); k++){
+						modelos.push_back(strLuzesMod.at(k));
 					}
 					modelos.push_back(m->Value());
 					long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
@@ -608,7 +768,6 @@ void lerXML(TiXmlElement* e){
 						normP.push_back(p3);
 					}
 					fich >> nverticesT;
-					printf("%d\n",nverticesT);
         			for(int k = 0; k < nverticesT; k++){
         				fich >> p1;
 						fich >> p2;
@@ -626,15 +785,39 @@ void lerXML(TiXmlElement* e){
 
 			else if(strcmp("patches",e->Value()) == 0){
 				char buff2[15];
+				strLuzesMod.clear();
+				char buff[15];
+				int nPropM = 0;
 				if(e==NULL) printf("Erro no patches.\n");
 				TiXmlElement* m = e->FirstChildElement("patch");
 				while(m){
 					modelos.push_back("color");
-					for(int i=1;i<13;i++){
-						pAttrib = m->Attribute(mod[i]);
-						if(pAttrib)
-							modelos.push_back(pAttrib);
-						else modelos.push_back("0.0");
+						for(int r=1;r<13;r+=3){
+						pAttrib = m->Attribute(mod[r]);
+						pAttrib2 = m->Attribute(mod[r+1]);
+						pAttrib3 = m->Attribute(mod[r+2]);
+						if(!(pAttrib || pAttrib2 || pAttrib3)){ }
+						else{
+							if(r==1) strLuzesMod.push_back("diffuse");
+							if(r==4) strLuzesMod.push_back("specular");
+							if(r==7) strLuzesMod.push_back("emission");
+							if(r==10) strLuzesMod.push_back("ambient");
+							if(pAttrib)
+								strLuzesMod.push_back(pAttrib);
+							else strLuzesMod.push_back("0.0");
+							if(pAttrib2)
+								strLuzesMod.push_back(pAttrib2);
+							else strLuzesMod.push_back("0.0");
+							if(pAttrib3)
+								strLuzesMod.push_back(pAttrib3);
+							else strLuzesMod.push_back("0.0");
+							nPropM += 4;
+						}
+					}
+			    	sprintf(buff, "%d", nPropM);
+    				modelos.push_back(buff);
+					for(int k=0; k<strLuzesMod.size(); k++){
+						modelos.push_back(strLuzesMod.at(k));
 					}
 					modelos.push_back(m->Value());
 					long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
@@ -667,7 +850,7 @@ void lerXML(TiXmlElement* e){
 						verticesTP.push_back(p8);
 						verticesTP.push_back(p9);
 
-						float v1[3] = {p1,p2,p3};
+						/*float v1[3] = {p1,p2,p3};
 						float v2[3] = {p4,p5,p6};
 						float v3[3] = {p7,p8,p9};
 						float res[3];
@@ -691,8 +874,17 @@ void lerXML(TiXmlElement* e){
 
 						norm.push_back(res[0]);
 						norm.push_back(res[1]);
-						norm.push_back(res[2]);
+						norm.push_back(res[2]);*/
 
+						}
+						fich >> nverticesNP;
+        				for(int k = 0; k < nverticesNP; k++){
+        					fich >> p1;
+							fich >> p2;
+							fich >> p3;
+							norm.push_back(p1);
+							norm.push_back(p2);
+							norm.push_back(p3);
 						}
 				     }
 				 	fich.close();
@@ -793,8 +985,10 @@ int main(int argc, char* argv[]) {
     glutKeyboardFunc(processKeys);
     
     //  OpenGL settings
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+    //glEnable(GL_CULL_FACE);
     glClearColor(0.0f,0.0f,0.0f,0.0f);
     
     if( glewInit() != GLEW_OK )
@@ -821,13 +1015,16 @@ int main(int argc, char* argv[]) {
 	prepareTexturas();
 
 	//glEnable(GL_TEXTURE_2D);
-	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
 
-	//for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
+	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
+	//for(int i=0;i<strLuzes.size();i++) printf("-> %s\n",strLuzes.at(i).c_str());
 	//for(int i=0;i<normT.size();i+=2) printf("%f %f\n",normT.at(i), normT.at(i+1));
-	printf("%li\n",normT.size());
+	/*printf("%li\n",normP.size());
+	printf("%li\n",verticesTP.size());
+	printf("%li\n",norm.size());
+	printf("%li\n",vertices.size());*/
 
     // enter GLUT's main cycle
     glutMainLoop();
