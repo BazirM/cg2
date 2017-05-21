@@ -606,7 +606,7 @@ int main(int argc, char* argv[]) {
 
 	outputFile << nvPatch << "\n";
 
-	for(int i=0;i<textV.size();i+=2){ printf("%d\n",i); outputFile << textV.at(i) << " " << textV.at(i+1) <<  "\n"; }
+	for(int i=0;i<textV.size();i+=2){ outputFile << textV.at(i) << " " << textV.at(i+1) <<  "\n"; }
 
     printf("Done\n");
     outputFile.close();
