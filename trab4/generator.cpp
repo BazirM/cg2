@@ -535,8 +535,6 @@ void calcularNormalTriangulo(float *a, float *b, float *c, float *res){
 
 
 int main(int argc, char* argv[]) {
-
-	//for(int i=0;i<argc;i++) printf("%s\n",argv[i]);
     
 	FILE *f=NULL, *patch=NULL;
 
@@ -544,9 +542,6 @@ int main(int argc, char* argv[]) {
 
     if(strcmp(argv[1],"patch")==0 && argc == 5){
     	outputFile.open(argv[argc-1]);
-
-    	//printf("%s\n",argv[3]);
-    	//printf("%s\n",argv[argc-1]);
 
     	patch = fopen(argv[2],"r");
     	f = fopen(argv[argc-1],"w");
@@ -596,28 +591,6 @@ int main(int argc, char* argv[]) {
 		float v2[3] = {p4,p5,p6};
 		float v3[3] = {p7,p8,p9};
 		float res[3];
-
-		/*calcularNormalTriangulo(v1,v2,v3,res);
-		normalize(res);
-
-		normalP.push_back(res[0]);
-		normalP.push_back(res[1]);
-		normalP.push_back(res[2]);
-
-		calcularNormalTriangulo(v2,v3,v1,res);
-		normalize(res);
-
-		normalP.push_back(res[0]);
-		normalP.push_back(res[1]);
-		normalP.push_back(res[2]);
-
-		calcularNormalTriangulo(v3,v1,v2,res);
-		normalize(res);
-
-		normalP.push_back(res[0]);
-		normalP.push_back(res[1]);
-		normalP.push_back(res[2]);*/
-
 	}
 
 	outputFile << nvPatch << "\n";
@@ -1010,9 +983,6 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(v1[1]);
 			normalV.push_back(v1[2]);
 
-			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
-			//normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
-
 			textV.push_back(i*1.0/slices);
 			textV.push_back(j*1.0/stacks);
 
@@ -1042,10 +1012,6 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << "\n";
 
-			//normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			//normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-
 			v1[0] = radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
 			v1[2] = radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
@@ -1066,10 +1032,6 @@ int main(int argc, char* argv[]) {
 			outputFile << radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << "\n";
 
-			//normalV.push_back(sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			//normalV.push_back(cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-
 			v1[0] = radius * sin((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
 			v1[2] = radius * cos((2*M_PI/slices)*(i+1)) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
@@ -1088,10 +1050,6 @@ int main(int argc, char* argv[]) {
 			outputFile << " ";
 			outputFile << radius * cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			outputFile << "\n";
-
-			//normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));
-			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*(j+1)));
-			//normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1)));	
 
 			v1[0] = radius * sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*(j+1));
 			v1[1] = radius * sin((M_PI/2)-(M_PI/stacks)*(j+1));
@@ -1120,10 +1078,6 @@ int main(int argc, char* argv[]) {
 			normalV.push_back(v1[0]);
 			normalV.push_back(v1[1]);
 			normalV.push_back(v1[2]);
-
-			//normalV.push_back(sin((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
-			//normalV.push_back(sin((M_PI/2)-(M_PI/stacks)*j));
-			//normalV.push_back(cos((2*M_PI/slices)*i) * cos((M_PI/2)-(M_PI/stacks)*j));
 
 			textV.push_back(i*1.0/slices);
 			textV.push_back(j*1.0/stacks);

@@ -24,12 +24,8 @@ vector<GLfloat> textP;
 int nvertices, nvertices2, tess, cont, contSoma, nverticesN, nverticesT, nverticesNP;
 float timer, ang, tempo = 1.0, temp = 0.0;
 
-int specular, ambient, emission, diffuse, diffuseL, specularL, emissionL, ambientL;
-
 int nv = 0;
 int nvp = 0;
-
-	int frame = 0;
 
 vector<GLfloat> norm;
 vector<GLfloat> normP;
@@ -276,16 +272,6 @@ void renderScene(void) {
 	contSoma = 0;
 	cont = 0;
 
-	specular = 0;
-	diffuse = 0;
-	emission = 0;
-	ambient = 0;
-
-	specularL = 0;
-	diffuseL = 0;
-	emissionL = 0;
-	ambientL = 0;
-
 	nv = 0;
 
 
@@ -413,7 +399,7 @@ void renderScene(void) {
         }
 
         else if(strcmp("texture",modelos.at(i).c_str())==0){
-        	glEnable(GL_TEXTURE_2D);	// com o disable depois do group para nao misturar texturas
+        	glEnable(GL_TEXTURE_2D); // com o disable depois do group para nao misturar texturas
         	int idTextura = atoi(modelos.at(i+1).c_str());
         	glBindTexture(GL_TEXTURE_2D, idTextura);
         	i+=2;
@@ -458,7 +444,13 @@ void renderScene(void) {
 			nvp += atoi(modelos.at(i+1).c_str());
 		 	i=i+2;
 		 	GLfloat r_emission[4] = {0.0, 0.0, 0.0, 1.0};
+		 	GLfloat r_specular[4] = {0.0, 0.0, 0.0, 1.0};
+		 	GLfloat r_ambient[4] = {0.2, 0.2, 0.2, 1.0};
+		 	GLfloat r_diffuse[4] = {0.8, 0.8, 0.8, 1.0};
 			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, r_emission);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, r_diffuse);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, r_ambient);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, r_specular);
 	     }
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
@@ -722,14 +714,13 @@ void lerXML(TiXmlElement* e){
 						normP.push_back(p2);
 						normP.push_back(p3);
 					}
+					//textura
 					fich >> nverticesT;
         			for(int k = 0; k < nverticesT; k++){
         				fich >> p1;
 						fich >> p2;
-						//fich >> p3;
 						normT.push_back(p1);
 						normT.push_back(p2);
-						//normT.push_back(p3);
 					}
 		     		}
 		    	 	fich.close();
@@ -806,6 +797,7 @@ void lerXML(TiXmlElement* e){
 						verticesTP.push_back(p9);
 
 						}
+						//normal
 						fich >> nverticesNP;
         				for(int k = 0; k < nverticesNP; k++){
         					fich >> p1;
@@ -815,6 +807,7 @@ void lerXML(TiXmlElement* e){
 							norm.push_back(p2);
 							norm.push_back(p3);
 						}
+						//textura
 						fich >> nverticesT;
 						for(int k = 0; k < nverticesT; k++){
         				fich >> p1;
@@ -913,7 +906,6 @@ int main(int argc, char* argv[]) {
     glutIdleFunc(renderScene);
     
     // Callback registration for keyboard processing
-    //glutSpecialFunc(processSpecialKeys);
     glutKeyboardFunc(processKeys);
     
     //  OpenGL settings
