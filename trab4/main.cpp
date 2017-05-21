@@ -12,11 +12,6 @@
 #include <stdlib.h>
 #include <IL/il.h>
 
-//ver agora a questão da textura e normais no teapot, textura no plano, cone, ...
-//qestao se a luz dá bem ou nao, etc
-//preencher o xml
-//colocar luz "antes" do gllookat, etc ..
-
 using namespace std;
 #define POINT_COUNT 5
 float alfa = M_PI/2, beta = M_PI/6, raio = 200.0;
@@ -25,6 +20,7 @@ float y[3]={0,-1,0};
 vector<std::string> modelos;
 vector<float> pontosT;
 vector<float> pontosLuz;
+vector<GLfloat> textP;
 int nvertices, nvertices2, tess, cont, contSoma, nverticesN, nverticesT, nverticesNP;
 float timer, ang, tempo = 1.0, temp = 0.0;
 
@@ -43,7 +39,7 @@ vector<std::string> strLuzesMod;
 
 vector<GLfloat> vertices, verticesTP;
 
-GLuint buffer, buffer2, buffer3, buffer4, buffer5;
+GLuint buffer, buffer2, buffer3, buffer4, buffer5, buffer6;
 GLuint texID;
 
 
@@ -188,24 +184,6 @@ void processKeys(unsigned char c, int xx, int yy) {
 
 void desenhaModelo(int v, int mv){
 
-	//GLfloat amb[4] = {0.2, 0.2, 0.2, 1.0};
-	//GLfloat diff[4] = {1.0, 1.0, 1.0, 1.0};
-	//GLfloat pos[4] = {0.0, 0.0 ,1.0, 0.0};
-
-	/*float pos[4] = {1.0, 1.0, 1.0, 0.0};
-	float grena[4] = {153.0/255.0, 0.0, 51.0/255.0, 1.0};*/
-
-	/*GLfloat amb[4] = {0.2, 0.2, 0.2, 1.0};
-	GLfloat diff[4] = {1.0, 1.0, 1.0, 1.0};
-	float red[4] = {0.8f, 0.2f, 0.2f, 1.0f};
-
-	glMaterialfv(GL_FRONT, GL_SPECULAR, red);
-	glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
-
-	float purple[4] = { 1.0f,0.0f,1.0f, 1.0f };
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, purple);*/
-
-
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glVertexPointer(3,GL_FLOAT,0,0);
 
@@ -221,31 +199,15 @@ void desenhaModelo(int v, int mv){
 
 void desenhaTeap(int v, int mv){
 
-
-	/*float pos[4] = {1.0, 1.0, 1.0, 0.0};
-	float grena[4] = {153.0/255.0f, 0.0f, 51.0/255.0f, 1.0f};
-
-	GLfloat amb[4] = {0.2, 0.2, 0.2, 1.0};
-	GLfloat diff[4] = {1.0, 1.0, 1.0, 1.0};
-	float red[4] = {0.8f, 0.2f, 0.2f, 1.0f};
-
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, grena);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, diff);
-*/
-	//glMaterialf(GL_FRONT, GL_SHININESS, 1.0);
-
-	//float purple[4] = { 1.0f,0.0f,1.0f, 1.0f };
-	//glMaterialfv(GL_FRONT, GL_DIFFUSE, purple);
-
 	glBindBuffer(GL_ARRAY_BUFFER, buffer2);
 	glVertexPointer(3,GL_FLOAT,0,0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer3);
 	glNormalPointer(GL_FLOAT, 0, 0);	
 
+	glBindBuffer(GL_ARRAY_BUFFER,buffer6);
+	glTexCoordPointer(2,GL_FLOAT,0,0);
 
-	/*glBindBuffer(GL_ARRAY_BUFFER, buffer4);
-	glNormalPointer(GL_FLOAT, 0, 0);*/
 
 	glDrawArrays(GL_TRIANGLES, mv, (mv + v));
 
@@ -289,9 +251,13 @@ void prepareTexturas(){
 	glBindBuffer(GL_ARRAY_BUFFER, buffer5);
 	glBufferData(GL_ARRAY_BUFFER, normT.size() * sizeof(float), &normT[0], GL_STATIC_DRAW);
 
+	glGenBuffers(1, &buffer6);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer6);
+	glBufferData(GL_ARRAY_BUFFER, textP.size() * sizeof(float), &textP[0], GL_STATIC_DRAW);
+
+
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);	
 }
-
 
 
 void renderScene(void) {
@@ -301,7 +267,6 @@ void renderScene(void) {
 	float deriv[3];
 	float m[16]; 
 	float z[3];
-	float pos[4] = {0.0, 0.0, 0.0, 1.0};
 
     float amM[3];
     float emiM[3];
@@ -321,6 +286,8 @@ void renderScene(void) {
 	emissionL = 0;
 	ambientL = 0;
 
+	nv = 0;
+
 
 	nv = 0;
 	nvp = 0;
@@ -333,6 +300,8 @@ void renderScene(void) {
     gluLookAt(raio*sin(alfa)*cos(beta),raio*sin(beta),raio*cos(beta)*cos(alfa),
               0.0,0.0,0.0,
               0.0f,1.0f,0.0f);
+
+	glEnable(GL_COLOR_MATERIAL);
 
     for(int i=0;i<modelos.size();){
 		if(strcmp("group",modelos.at(i).c_str())==0){
@@ -351,7 +320,6 @@ void renderScene(void) {
 			timer = glutGet(GLUT_ELAPSED_TIME);
 			tempo = atof(modelos.at(i+1).c_str());
 			cont = atoi(modelos.at(i+2).c_str());
-		    //glColor3f(255.0/255.0,255.0/255.0,255.0/255.0);
 			renderCatmullRomCurve();
 			getGlobalCatmullRomPoint(timer/(tempo*1000),res,deriv);
 			normalize(deriv);
@@ -417,34 +385,27 @@ void renderScene(void) {
         				am[0] = atof(strLuzes.at(k+1).c_str());
         				am[1] = atof(strLuzes.at(k+2).c_str());
         				am[2] = atof(strLuzes.at(k+3).c_str());
-        				ambientL = 1;
-        				//glLightfv(GL_LIGHT0+j, GL_AMBIENT, am);
-        				k+=4;
+        				glLightfv(GL_LIGHT0+j, GL_AMBIENT, am);
         			}
         			else if(strcmp("emission",strLuzes.at(k).c_str()) == 0){
         				emi[0] = atof(strLuzes.at(k+1).c_str());
         				emi[1] = atof(strLuzes.at(k+2).c_str());
         				emi[2] = atof(strLuzes.at(k+3).c_str());
-        				emissionL = 1;
-        				//glLightfv(GL_LIGHT0+j, GL_EMISSION, emi);
-        				k+=4;
+        				glLightfv(GL_LIGHT0+j, GL_EMISSION, emi);
         			}
         			else if(strcmp("specular",strLuzes.at(k).c_str()) == 0){
         				dif[0] = atof(strLuzes.at(k+1).c_str());
         				dif[1] = atof(strLuzes.at(k+2).c_str());
         				dif[2] = atof(strLuzes.at(k+3).c_str());
-        				specularL = 1;
-        				//glLightfv(GL_LIGHT0+j, GL_SPECULAR, dif);
-        				k+=4;
+        				glLightfv(GL_LIGHT0+j, GL_SPECULAR, dif);
         			}
         			else if(strcmp("diffuse",strLuzes.at(k).c_str()) == 0){
         				spec[0] = atof(strLuzes.at(k+1).c_str());
         				spec[1] = atof(strLuzes.at(k+2).c_str());
         				spec[2] = atof(strLuzes.at(k+3).c_str());
-        				diffuseL = 1;
-        				//glLightfv(GL_LIGHT0+j, GL_DIFFUSE, spec);
-        				k+=4;
+        				glLightfv(GL_LIGHT0+j, GL_DIFFUSE, spec);
         			}
+        			k+=4;
         		}
         		acum += nComp;
         	}
@@ -466,64 +427,59 @@ void renderScene(void) {
         				amM[0] = atof(modelos.at(k+1).c_str())/255.0;
         				amM[1] = atof(modelos.at(k+2).c_str())/255.0;
         				amM[2] = atof(modelos.at(k+3).c_str())/255.0;
-        				ambient = 1;
-						//glMaterialfv(GL_FRONT, GL_AMBIENT, amM);
-        				k+=4;
+						glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amM);
         			}
         			else if(strcmp("emission",modelos.at(k).c_str()) == 0){
         				emiM[0] = atof(modelos.at(k+1).c_str())/255.0;
         				emiM[1] = atof(modelos.at(k+2).c_str())/255.0;
         				emiM[2] = atof(modelos.at(k+3).c_str())/255.0;
-        				emission = 1;
-						//glMaterialfv(GL_FRONT, GL_EMISSION, emiM);
-        				k+=4;
+						glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emiM);
         			}
         			else if(strcmp("specular",modelos.at(k).c_str()) == 0){
         				specM[0] = atof(modelos.at(k+1).c_str())/255.0;
         				specM[1] = atof(modelos.at(k+2).c_str())/255.0;
         				specM[2] = atof(modelos.at(k+3).c_str())/255.0;
-        				specular = 1;
-						//glMaterialfv(GL_FRONT, GL_SPECULAR, specM);
-						//glMaterialf(GL_FRONT, GL_SHININESS, 100.0f);
-        				k+=4;
+						glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specM);
+						glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0f);
         			}
         			else if(strcmp("diffuse",modelos.at(k).c_str()) == 0){
         				difM[0] = atof(modelos.at(k+1).c_str())/255.0;
         				difM[1] = atof(modelos.at(k+2).c_str())/255.0;
         				difM[2] = atof(modelos.at(k+3).c_str())/255.0;
-        				diffuse = 1;
-						//glMaterialfv(GL_FRONT, GL_DIFFUSE, difM);
-        				k+=4;
+						glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, difM);
         			}
+        				k+=4;
         		}
             	i+=num+2;
 		}
 
 		else if(strcmp("patch",modelos.at(i).c_str())==0){
-			nvp += atoi(modelos.at(i+1).c_str());
 			desenhaTeap(atoi(modelos.at(i+1).c_str()), nvp);
-			if(diffuse == 1){glMaterialfv(GL_FRONT, GL_DIFFUSE, difM); diffuse=0;}
-			if(ambient == 1){glMaterialfv(GL_FRONT, GL_AMBIENT, amM); ambient=0;}
-			if(specular == 1){glMaterialfv(GL_FRONT, GL_SPECULAR, specM); glMaterialf(GL_FRONT, GL_SHININESS, 100.0f); specular=0;}
-			if(emission == 1){glMaterialfv(GL_FRONT, GL_EMISSION, emiM); emission=0;}
-		 i=i+2;
+			nvp += atoi(modelos.at(i+1).c_str());
+		 	i=i+2;
+		 	GLfloat r_emission[4] = {0.0, 0.0, 0.0, 1.0};
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, r_emission);
 	     }
 
 		else if(strcmp("model",modelos.at(i).c_str())==0){
-			int numVert = atoi(modelos.at(i+1).c_str());
-			desenhaModelo(numVert, nv);
-			if(diffuse == 1){glMaterialfv(GL_FRONT, GL_DIFFUSE, difM); diffuse=0;}
-			if(ambient == 1){glMaterialfv(GL_FRONT, GL_AMBIENT, amM); ambient=0;}
-			if(specular == 1){glMaterialfv(GL_FRONT, GL_SPECULAR, specM); glMaterialf(GL_FRONT, GL_SHININESS, 100.0f); specular=0;}
-			if(emission == 1){glMaterialfv(GL_FRONT, GL_EMISSION, emiM); emission=0;}
-			nv += numVert;
+			desenhaModelo(atoi(modelos.at(i+1).c_str()), nv);
+			nv += atoi(modelos.at(i+1).c_str());
 		 	i=i+2;
+		 	GLfloat r_emission[4] = {0.0, 0.0, 0.0, 1.0};
+		 	GLfloat r_specular[4] = {0.0, 0.0, 0.0, 1.0};
+		 	GLfloat r_ambient[4] = {0.2, 0.2, 0.2, 1.0};
+		 	GLfloat r_diffuse[4] = {0.8, 0.8, 0.8, 1.0};
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, r_emission);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, r_diffuse);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, r_ambient);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, r_specular);
 	     }
     }
 
     // End of frame
     glutSwapBuffers();
 }
+
 
 
 
@@ -742,7 +698,6 @@ void lerXML(TiXmlElement* e){
 					modelos.push_back(m->Value());
 					long double p1,p2,p3,p4,p5,p6,p7,p8,p9;
 					ifstream fich;
-					//modelos.push_back(m->Attribute(mod[0]));
 					fich.open(m->Attribute(mod[0]));
 					if (fich.is_open()){
     				fich >> nvertices;
@@ -850,32 +805,6 @@ void lerXML(TiXmlElement* e){
 						verticesTP.push_back(p8);
 						verticesTP.push_back(p9);
 
-						/*float v1[3] = {p1,p2,p3};
-						float v2[3] = {p4,p5,p6};
-						float v3[3] = {p7,p8,p9};
-						float res[3];
-
-						calcularNormalTriangulo(v1,v2,v3,res);
-						normalize(res);
-
-						norm.push_back(res[0]);
-						norm.push_back(res[1]);
-						norm.push_back(res[2]);
-
-						calcularNormalTriangulo(v2,v3,v1,res);
-						normalize(res);
-
-						norm.push_back(res[0]);
-						norm.push_back(res[1]);
-						norm.push_back(res[2]);
-
-						calcularNormalTriangulo(v3,v1,v2,res);
-						normalize(res);
-
-						norm.push_back(res[0]);
-						norm.push_back(res[1]);
-						norm.push_back(res[2]);*/
-
 						}
 						fich >> nverticesNP;
         				for(int k = 0; k < nverticesNP; k++){
@@ -886,6 +815,13 @@ void lerXML(TiXmlElement* e){
 							norm.push_back(p2);
 							norm.push_back(p3);
 						}
+						fich >> nverticesT;
+						for(int k = 0; k < nverticesT; k++){
+        				fich >> p1;
+						fich >> p2;
+						textP.push_back(p1);
+						textP.push_back(p2);
+					}
 				     }
 				 	fich.close();
 					//modelos.push_back(m->Attribute(mod[0]));
@@ -964,10 +900,6 @@ void lerXML(TiXmlElement* e){
 
 int main(int argc, char* argv[]) {
 
-
-	//for(int i=0;i<normT.size();i++) printf("%f\n",normT.at(i));
-	//for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
-    
     // init GLUT and the window
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
@@ -1014,17 +946,10 @@ int main(int argc, char* argv[]) {
 
 	prepareTexturas();
 
-	//glEnable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
 
 	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
-	//for(int i=0;i<strLuzes.size();i++) printf("-> %s\n",strLuzes.at(i).c_str());
-	//for(int i=0;i<normT.size();i+=2) printf("%f %f\n",normT.at(i), normT.at(i+1));
-	/*printf("%li\n",normP.size());
-	printf("%li\n",verticesTP.size());
-	printf("%li\n",norm.size());
-	printf("%li\n",vertices.size());*/
 
     // enter GLUT's main cycle
     glutMainLoop();

@@ -28,16 +28,10 @@ vector<float> normalP;
 
 void normalize(float *a) { 
 	float l = sqrt(a[0]*a[0] + a[1] * a[1] + a[2] * a[2]); 
-	if(l==0){
-		a[0] = 0;
-		a[1] = 0;
-		a[2] = 1;
-	}
-	else{
+	if(l==0) l == 1;
 	a[0] = a[0]/l;
 	a[1] = a[1]/l; 
 	a[2] = a[2]/l;
-	} 
 
 }
 
