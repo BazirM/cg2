@@ -204,7 +204,6 @@ void desenhaTeap(int v, int mv){
 	glBindBuffer(GL_ARRAY_BUFFER,buffer6);
 	glTexCoordPointer(2,GL_FLOAT,0,0);
 
-
 	glDrawArrays(GL_TRIANGLES, mv, (mv + v));
 
 }
@@ -473,19 +472,6 @@ void renderScene(void) {
 }
 
 
-
-
-
-void calcularNormalTriangulo(float *a, float *b, float *c, float *res){
-	float U[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2]};
-	float V[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2]};
-
-	cross(U,V,res);
-
-
-}
-
-
 int loadTexture(std::string s) {
 
 	unsigned int t,tw,th;
@@ -524,7 +510,6 @@ int loadTexture(std::string s) {
 
 void lerXML(TiXmlElement* e){
 
-	//char buff[15];
 	const char* pAttrib;
 	const char* pAttrib2;
 	const char* pAttrib3;
@@ -940,8 +925,6 @@ int main(int argc, char* argv[]) {
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_NORMALIZE);
-
-	for(int i=0;i<modelos.size();i++) printf("%s\n",modelos.at(i).c_str());
 
     // enter GLUT's main cycle
     glutMainLoop();
